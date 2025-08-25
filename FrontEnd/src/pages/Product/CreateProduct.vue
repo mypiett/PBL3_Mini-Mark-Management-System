@@ -1,10 +1,9 @@
 <script setup>
-import MainPage from '../../components/Mainpage.vue'
-import TheHeader from '../../components/TheHeader.vue'
+import MainPage from '../../components/Mainpage.vue';
+import TheHeader from '../../components/TheHeader.vue';
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
-
 
 axios.defaults.baseURL = 'http://localhost:8083';
 const router = useRouter();
@@ -20,7 +19,6 @@ const product = ref({
   supplierId: '',
 });
 
-
 const categories = ref([]);
 const suppliers = ref([]);
 const message = ref('');
@@ -32,7 +30,6 @@ onMounted(async () => {
   suppliers.value = res2.data;
 });
 
-
 const saveProduct = async () => {
   const payload = {
     product_id: product.value.productId,
@@ -43,23 +40,19 @@ const saveProduct = async () => {
     supplier_id: product.value.supplierId,
     sell: product.value.sell,
     img: product.value.img,
-    expirationDate: product.value.expiration_date
+    expirationDate: product.value.expiration_date,
   };
-
 
   try {
     await axios.post('/api/products', payload);
-    message.value = 'Sản phẩm đã được thêm thành công!';  // Cập nhật thông báo thành công
+    message.value = 'Sản phẩm đã được thêm thành công!'; // Cập nhật thông báo thành công
     router.push('/ProductCatalog'); // Điều hướng sau khi lưu
   } catch (error) {
     console.error('Lỗi khi thêm sản phẩm:', error);
-    message.value = 'Thêm sản phẩm thất bại!';  // Cập nhật thông báo lỗi
+    message.value = 'Thêm sản phẩm thất bại!'; // Cập nhật thông báo lỗi
   }
 };
-
-
 </script>
-
 
 <template>
   <div class="main-container">
@@ -77,28 +70,26 @@ const saveProduct = async () => {
                   <label>Danh mục <span class="required">*</span></label>
                   <select v-model="product.categoryId">
                     <option disabled value="">Chọn danh mục</option>
-                    <option v-for="cat in categories" :key="cat.categoryId" :value="cat.categoryId">{{ cat.name }}</option>
+                    <option v-for="cat in categories" :key="cat.categoryId" :value="cat.categoryId">
+                      {{ cat.name }}
+                    </option>
                   </select>
                 </div>
-
 
                 <div class="form-group">
                   <label>Tên sản phẩm <span class="required">*</span></label>
                   <input v-model="product.name" type="text" />
                 </div>
 
-
                 <div class="form-group">
                   <label>Giá nhập</label>
                   <input type="number" v-model="product.price" />
                 </div>
 
-
                 <!-- <div class="form-group">
                   <label>Số lượng</label>
                   <input type="number" v-model="product.quantity" />
                 </div> -->
-
 
                 <div class="form-group">
                   <label>Ngày hết hạn</label>
@@ -106,19 +97,19 @@ const saveProduct = async () => {
                 </div>
               </div>
 
-
               <div class="right-form">
-                <div class="image-upload form-group" >
+                <div class="image-upload form-group">
                   <label>Hình đại diện (600x400)</label>
                   <input type="text" v-model="product.img" placeholder="URL ảnh hoặc chọn ảnh" />
                 </div>
-
 
                 <div class="form-group">
                   <label>Nhà cung cấp</label>
                   <select v-model="product.supplierId">
                     <option disabled value="">Chọn nhà cung cấp</option>
-                    <option v-for="sup in suppliers" :key="sup.supplierId" :value="sup.supplierId">{{ sup.name }}</option>
+                    <option v-for="sup in suppliers" :key="sup.supplierId" :value="sup.supplierId">
+                      {{ sup.name }}
+                    </option>
                   </select>
                 </div>
                 <div class="form-group">
@@ -138,7 +129,6 @@ const saveProduct = async () => {
   </div>
 </template>
 
-
 <style scoped>
 body {
   padding: 0;
@@ -152,7 +142,6 @@ body {
   position: relative;
 }
 
-
 .container {
   flex: 1;
   display: flex;
@@ -162,21 +151,20 @@ body {
   position: relative;
 }
 
-
 .page {
   flex: 1;
   display: flex;
   flex-direction: column;
   background-color: #fff;
   position: relative;
-  font-family:Arial, Helvetica, sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
 }
-.page-main{
-    display: flex;
-    flex-direction: column;
-    margin-top: 6%;
-    padding: 0px 30px;
-    background-color: #f5f5f5;
+.page-main {
+  display: flex;
+  flex-direction: column;
+  margin-top: 6%;
+  padding: 0px 30px;
+  background-color: #f5f5f5;
 }
 .form-container {
   padding: 30px;
@@ -184,18 +172,15 @@ body {
   background-color: #fff;
 }
 
-
 h2 {
   color: #0884f1;
   margin-bottom: 20px;
 }
 
-
 .form-grid {
   display: flex;
   gap: 30px;
 }
-
 
 .left-form,
 .right-form {
@@ -205,18 +190,15 @@ h2 {
   gap: 15px;
 }
 
-
 .form-group {
   display: flex;
   flex-direction: column;
 }
 
-
 .form-group label {
   font-weight: bold;
   margin-bottom: 5px;
 }
-
 
 .form-group input,
 .form-group select {
@@ -225,11 +207,9 @@ h2 {
   border-radius: 4px;
 }
 
-
 .required {
   color: red;
 }
-
 
 .image-upload input {
   padding: 8px;
@@ -257,7 +237,6 @@ button {
   cursor: pointer;
 }
 
-
 button:hover {
   background-color: #279aff;
 }
@@ -275,14 +254,10 @@ button:hover {
   cursor: pointer;
 }
 
-
 .back-button:hover {
   background-color: #279aff;
 }
-a{
+a {
   text-decoration: none;
 }
 </style>
-
-
-

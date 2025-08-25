@@ -1,5 +1,4 @@
 <script setup>
-
 import MainPage from '../components/Mainpage.vue';
 import TheHeader from '../components/TheHeader.vue';
 import EmployeeMain from '../components/EmployeeMain.vue';
@@ -7,10 +6,10 @@ import EmployeeMain from '../components/EmployeeMain.vue';
 
 <template>
   <div class="main-container">
-    <MainPage class="main-left"/>
+    <MainPage class="main-left" />
     <div class="container">
       <div class="page">
-        <TheHeader class="header"/>
+        <TheHeader class="header" />
         <EmployeeMain />
       </div>
     </div>
@@ -36,7 +35,7 @@ body {
   top: 0;
   left: 0;
   /* background: #fff; */
-  z-index: 1000; 
+  z-index: 1000;
 }
 .header {
   position: relative;
@@ -44,10 +43,8 @@ body {
   z-index: 1;
 }
 
-
-
 .container {
-  flex: 1; 
+  flex: 1;
   display: flex;
   flex-direction: column;
   background-color: #fff;
@@ -61,5 +58,4 @@ body {
   flex-direction: column;
   background-color: #fff;
 }
-
 </style>

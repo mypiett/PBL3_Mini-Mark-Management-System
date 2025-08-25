@@ -24,16 +24,16 @@ const Check = async () => {
   try {
     const response = await axios.post('http://localhost:8083/api/employees/login', {
       user_name: UserName.value,
-      password: Password.value
+      password: Password.value,
     });
 
     sessionStorage.setItem('employee', JSON.stringify(response.data));
     inform.value = true;
     const role = response.data.position;
     if (role.includes('Quản lý')) {
-      await router.push('/home'); 
+      await router.push('/home');
     } else {
-      await router.push('/adminHome'); 
+      await router.push('/adminHome');
     }
   } catch (error) {
     inform.value = false;
@@ -76,13 +76,7 @@ const Check = async () => {
           <font-awesome-icon :icon="['fas', 'lock']" class="input-icon" />
         </div>
 
-    
-
-        <button
-          class="button-SignIn"
-          @click="Check"
-          :disabled="loading"
-        >
+        <button class="button-SignIn" @click="Check" :disabled="loading">
           {{ loading ? 'Đang đăng nhập...' : 'Đăng Nhập' }}
         </button>
 
@@ -97,9 +91,7 @@ const Check = async () => {
           </p>
         </div> -->
         <div v-if="isChecked && inform === false">
-          <p class="informText error">
-            Đăng nhập thất bại hoặc vui lòng nhập đủ thông tin
-          </p>
+          <p class="informText error">Đăng nhập thất bại hoặc vui lòng nhập đủ thông tin</p>
         </div>
 
         <p style="margin: 0">

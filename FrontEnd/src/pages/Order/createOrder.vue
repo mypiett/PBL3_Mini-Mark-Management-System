@@ -1,10 +1,10 @@
 <script setup>
-import { ref,computed, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 import Toast from '@/components/Toast.vue';
 
-const router = useRouter()
+const router = useRouter();
 const productList = ref([]);
 const customers = ref([]);
 const selectedProductIds = ref([]);
@@ -31,7 +31,8 @@ const fetchProducts = async () => {
 
 // Gọi API để lấy danh sách khách hàng
 const fetchCustomers = async () => {
-  try {console.log("fetchCustomers");
+  try {
+    console.log('fetchCustomers');
     const response = await axios.get('http://localhost:8083/api/customers'); // Đường dẫn API backend
     customers.value = response.data;
   } catch (error) {
@@ -57,7 +58,7 @@ const addToOrder = (product) => {
 
 const filteredProducts = computed(() => {
   if (!searchText.value) return productList.value;
-  return productList.value.filter(product =>
+  return productList.value.filter((product) =>
     product.name.toLowerCase().includes(searchText.value.toLowerCase())
   );
 });
@@ -67,9 +68,9 @@ const removeFromOrder = (item) => {
 };
 
 const increaseQuantity = (item) => {
-  const product = productList.value.find(p => p.product_id === item.product_id);
+  const product = productList.value.find((p) => p.product_id === item.product_id);
   if (!product || item.quantity >= product.quantity) {
-    toastRef.value.show("Số lượng vượt quá tồn kho!", "warning");
+    toastRef.value.show('Số lượng vượt quá tồn kho!', 'warning');
     return;
   }
   item.quantity++;
@@ -78,18 +79,18 @@ const decreaseQuantity = (item) => {
   if (item.quantity > 1) item.quantity--;
 };
 const getMaxQuantity = (productId) => {
-  const product = productList.value.find(p => p.product_id === productId);
+  const product = productList.value.find((p) => p.product_id === productId);
   return product ? product.quantity : 999;
 };
 
 const validateQuantity = (item) => {
-  const product = productList.value.find(p => p.product_id === item.product_id);
+  const product = productList.value.find((p) => p.product_id === item.product_id);
   if (!product) return;
 
   if (item.quantity < 1) {
     item.quantity = 1;
   } else if (item.quantity > product.quantity) {
-    toastRef.value.show("Số lượng vượt quá tồn kho!", "warning");
+    toastRef.value.show('Số lượng vượt quá tồn kho!', 'warning');
     item.quantity = product.quantity;
   }
 };
@@ -103,9 +104,9 @@ const totalPrice = computed(() => {
 });
 
 const checkCustomer = () => {
-  console.log("checkCustomer");
+  console.log('checkCustomer');
   if (!customerPhone.value || customerPhone.value.length !== 10) {
-    toastRef.value.show("Số điện thoại phải gồm đúng 10 chữ số!", "warning");
+    toastRef.value.show('Số điện thoại phải gồm đúng 10 chữ số!', 'warning');
     return;
   }
   const customer = customers.value.find((c) => c.phone === customerPhone.value);
@@ -114,7 +115,7 @@ const checkCustomer = () => {
     selectedCustomer.value = customer.name;
     customerPhone.value = null;
 
-    const {points} = customer;
+    const { points } = customer;
     let discount = 0;
     // console.log(membership_type, points);
 
@@ -123,11 +124,13 @@ const checkCustomer = () => {
     }
     // console.log(discount);
     if (discount > 0) {
-      vouchers.value = [{
-        id: 'V' + discount,
-        name: `Giảm ${discount}%`,
-        discount: discount,
-      }];
+      vouchers.value = [
+        {
+          id: 'V' + discount,
+          name: `Giảm ${discount}%`,
+          discount: discount,
+        },
+      ];
     } else {
       vouchers.value = [];
     }
@@ -135,16 +138,16 @@ const checkCustomer = () => {
     customerInfo.value = null;
     selectedCustomer.value = '';
     vouchers.value = [];
-    toastRef.value.show("Không tìm thấy khách hàng!", "warning");
+    toastRef.value.show('Không tìm thấy khách hàng!', 'warning');
   }
-  console.log(vouchers.value)
+  console.log(vouchers.value);
 };
 const validatePhone = (e) => {
   const value = e.target.value;
 
   // Nếu có chữ cái → báo lỗi và xóa toàn bộ ô nhập
   if (/[a-zA-Z]/.test(value)) {
-    toastRef.value.show("Số điện thoại không được chứa chữ cái!", "warning");
+    toastRef.value.show('Số điện thoại không được chứa chữ cái!', 'warning');
     customerPhone.value = ''; // ← set thành rỗng (null)
     return;
   }
@@ -153,10 +156,9 @@ const validatePhone = (e) => {
   customerPhone.value = value.replace(/\D/g, '');
 };
 
-
 const submitOrder = async () => {
   if (orderItems.value.length === 0) {
-    toastRef.value.show("Vui lòng chọn khách hàng hoặc sản phẩm!", "warning");
+    toastRef.value.show('Vui lòng chọn khách hàng hoặc sản phẩm!', 'warning');
     return;
   }
 
@@ -168,34 +170,33 @@ const submitOrder = async () => {
       ? { customer_id: customerInfo.value.customer_id }
       : null,
     voucher: selectedVoucher.value ? selectedVoucher.value.discount : 0,
-    order_detail: orderItems.value.map(item => ({
+    order_detail: orderItems.value.map((item) => ({
       product: {
-        product_id: item.product_id
+        product_id: item.product_id,
       },
-      product_quantity: item.quantity
-    }))
+      product_quantity: item.quantity,
+    })),
   };
 
-  console.log("payload" + payload);
+  console.log('payload' + payload);
   try {
-
     const response = await axios.post('http://localhost:8083/api/orders', payload);
     // alert(`Đơn hàng đã được tạo thành công với mã: ${response.data.order_id}`);
 
     // Chuyển sang trang invoiceOrder
-    if(customerPhone){
+    if (customerPhone) {
       router.push({
         path: `/orders/${response.data.order_id}`,
         query: {
-          phone: customerPhone.value
-        }
-      })
-    }else{
+          phone: customerPhone.value,
+        },
+      });
+    } else {
       router.push({
         path: `/orders/${response.data.order_id}`,
-      })
+      });
     }
-   
+
     resetOrder();
   } catch (error) {
     console.error('Lỗi khi tạo đơn hàng:', error.response?.data || error);
@@ -209,7 +210,6 @@ const toggleVoucher = (voucher) => {
   } else {
     selectedVoucher.value = voucher; // Chọn mới
   }
-
 };
 const resetOrder = () => {
   selectedProductIds.value = [];
@@ -229,45 +229,49 @@ onMounted(() => {
 <template>
   <div class="main-container">
     <div class="header">
-      <router-link to="/invoice" class="back-button" style="text-decoration: none;">⬅️</router-link>
+      <router-link to="/invoice" class="back-button" style="text-decoration: none">⬅️</router-link>
       <span class="title">Tạo đơn hàng</span>
     </div>
 
     <div class="order-container">
       <!-- DANH SÁCH SẢN PHẨM -->
-        <div class="product-list">
-    <h2 class="section-title">Danh sách sản phẩm</h2>
-    <input type="text" v-model="searchText"
-    placeholder="Tìm kiếm sản phẩm theo tên..."
-    style="margin-bottom: 12px; width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc;"
-  />
-    <div class="list-product-head">
-      <div class="checkbox-col"></div>
-      <div class="name-col">Sản phẩm</div>
-      <div class="brand-col">Nhà cung cấp</div>
-      <!-- <div class="stock-col">Số lượng tồn kho</div> -->
-    </div>
-    <div
-      v-for="product in filteredProducts"
-      :key="product.product_id"
-      class="list-product-row"
-    >
-      <div class="checkbox-col">
+      <div class="product-list">
+        <h2 class="section-title">Danh sách sản phẩm</h2>
         <input
-          type="checkbox"
-          :value="product.product_id"
-          v-model="selectedProductIds"
-          @change="addToOrder(product)"
+          type="text"
+          v-model="searchText"
+          placeholder="Tìm kiếm sản phẩm theo tên..."
+          style="
+            margin-bottom: 12px;
+            width: 100%;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+          "
         />
+        <div class="list-product-head">
+          <div class="checkbox-col"></div>
+          <div class="name-col">Sản phẩm</div>
+          <div class="brand-col">Nhà cung cấp</div>
+          <!-- <div class="stock-col">Số lượng tồn kho</div> -->
+        </div>
+        <div v-for="product in filteredProducts" :key="product.product_id" class="list-product-row">
+          <div class="checkbox-col">
+            <input
+              type="checkbox"
+              :value="product.product_id"
+              v-model="selectedProductIds"
+              @change="addToOrder(product)"
+            />
+          </div>
+          <div class="name-col product-info">
+            <img :src="product.img" alt="product image" class="product-img" />
+            <span>{{ product.name }}</span>
+          </div>
+          <div class="brand-col">{{ product.supplier?.name || 'N/A' }}</div>
+          <!-- <div class="stock-col">{{ product.quantity }}</div> -->
+        </div>
       </div>
-      <div class="name-col product-info">
-        <img :src="product.img" alt="product image" class="product-img" />
-        <span>{{ product.name }}</span>
-      </div>
-      <div class="brand-col">{{ product.supplier?.name || 'N/A' }}</div>
-      <!-- <div class="stock-col">{{ product.quantity }}</div> -->
-    </div>
-  </div>
 
       <!-- Right: Order Info -->
       <div class="info-order">
@@ -275,7 +279,7 @@ onMounted(() => {
           <h2>Thông tin đơn hàng</h2>
         </div>
         <div class="order-info">
-        <!-- <label>Mã nhân viên:</label>
+          <!-- <label>Mã nhân viên:</label>
         <input type="text" v-model="employeeId" placeholder="Nhập mã nhân viên" style="margin-bottom: 12px;" /> -->
           <label>Số điện thoại khách hàng:</label>
           <div class="customer-check">
@@ -286,8 +290,6 @@ onMounted(() => {
               maxlength="10"
               @input="validatePhone"
             />
-
-
 
             <button @click="checkCustomer">Kiểm tra khách hàng</button>
           </div>
@@ -364,7 +366,7 @@ onMounted(() => {
   </div>
 </template>
 <style scoped>
-body{
+body {
   width: 100%;
   height: 100%;
   margin: 0;
@@ -402,12 +404,13 @@ body{
   padding: 20px;
 }
 
-.product-list, .info-order {
+.product-list,
+.info-order {
   flex: 1;
   background: #fff;
   border-radius: 10px;
   padding: 20px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .section-title {
@@ -417,7 +420,8 @@ body{
   color: #333;
 }
 
-.list-product-head, .list-product-row {
+.list-product-head,
+.list-product-row {
   display: grid;
   grid-template-columns: 1fr 6fr 4fr 1.5fr;
   align-items: center;
@@ -491,7 +495,7 @@ body{
 }
 
 /* Ẩn mũi tên cho Firefox */
-.quantity-control input[type=number] {
+.quantity-control input[type='number'] {
   -moz-appearance: textfield;
 }
 .order-info input,
@@ -569,7 +573,7 @@ body{
 }
 
 .order-footer .submit {
-  background-color: #16bc50;;
+  background-color: #16bc50;
   color: white;
 }
 

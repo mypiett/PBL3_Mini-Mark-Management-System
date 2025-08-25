@@ -1,41 +1,41 @@
 <script setup>
-import Mainpage from '../../components/Mainpage.vue'
+import Mainpage from '../../components/Mainpage.vue';
 // import Taskbar from '../../components/Taskbar.vue'
-import TheHeader from '../../components/TheHeader.vue'
-import { ref, computed, onMounted } from 'vue'
-import axios from 'axios'
-import { useRouter } from 'vue-router'
+import TheHeader from '../../components/TheHeader.vue';
+import { ref, computed, onMounted } from 'vue';
+import axios from 'axios';
+import { useRouter } from 'vue-router';
 
-const router = useRouter()
-const searchKeyword = ref('')
-const imports = ref([])
-const filterStatus = ref('')
-const filterTime = ref('')
+const router = useRouter();
+const searchKeyword = ref('');
+const imports = ref([]);
+const filterStatus = ref('');
+const filterTime = ref('');
 const dropdowns = ref({
   status: false,
-  time: false
-})
+  time: false,
+});
 
 function Dropdown(type) {
-  dropdowns.value[type] = !dropdowns.value[type]
+  dropdowns.value[type] = !dropdowns.value[type];
   for (let key in dropdowns.value) {
-    if (key !== type) dropdowns.value[key] = false
+    if (key !== type) dropdowns.value[key] = false;
   }
 }
 
 function filterByStatus(status) {
-  filterStatus.value = status
-  dropdowns.value.status = false
+  filterStatus.value = status;
+  dropdowns.value.status = false;
 }
 
 function filterByTime(time) {
-  filterTime.value = time
-  dropdowns.value.time = false
+  filterTime.value = time;
+  dropdowns.value.time = false;
 }
 
 function matchTimeFilter(dateStr, filter) {
-  const today = new Date()
-  const date = new Date(dateStr)
+  const today = new Date();
+  const date = new Date(dateStr);
 
   switch (filter) {
     case 'Hôm nay':
@@ -43,70 +43,67 @@ function matchTimeFilter(dateStr, filter) {
         date.getDate() === today.getDate() &&
         date.getMonth() === today.getMonth() &&
         date.getFullYear() === today.getFullYear()
-      )
+      );
     case 'Tuần này': {
-      const startOfWeek = new Date(today)
-      startOfWeek.setDate(today.getDate() - today.getDay())
-      const endOfWeek = new Date(startOfWeek)
-      endOfWeek.setDate(startOfWeek.getDate() + 6)
-      return date >= startOfWeek && date <= endOfWeek
+      const startOfWeek = new Date(today);
+      startOfWeek.setDate(today.getDate() - today.getDay());
+      const endOfWeek = new Date(startOfWeek);
+      endOfWeek.setDate(startOfWeek.getDate() + 6);
+      return date >= startOfWeek && date <= endOfWeek;
     }
     case 'Tháng này':
-      return (
-        date.getMonth() === today.getMonth() &&
-        date.getFullYear() === today.getFullYear()
-      )
+      return date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear();
     default:
-      return true
+      return true;
   }
 }
 
 const filteredImports = computed(() => {
-  return imports.value.filter(imp => {
-    const idStr = imp.importId ? imp.importId.toString().toLowerCase() : ''
-    const searchStr = searchKeyword.value.toLowerCase()
-    const matchId = idStr.includes(searchStr)
-    const matchStatus = filterStatus.value ? imp.status === filterStatus.value : true
-    const matchTime = filterTime.value ? matchTimeFilter(imp.import_date, filterTime.value) : true
-    return matchId && matchStatus && matchTime
-  })
-})
+  return imports.value.filter((imp) => {
+    const idStr = imp.importId ? imp.importId.toString().toLowerCase() : '';
+    const searchStr = searchKeyword.value.toLowerCase();
+    const matchId = idStr.includes(searchStr);
+    const matchStatus = filterStatus.value ? imp.status === filterStatus.value : true;
+    const matchTime = filterTime.value ? matchTimeFilter(imp.import_date, filterTime.value) : true;
+    return matchId && matchStatus && matchTime;
+  });
+});
 
 function resetFilters() {
-  filterStatus.value = ''
-  filterTime.value = ''
-  searchKeyword.value = ''
+  filterStatus.value = '';
+  filterTime.value = '';
+  searchKeyword.value = '';
 }
 
 function formatDate(dateStr) {
-  const date = new Date(dateStr)
+  const date = new Date(dateStr);
   return date.toLocaleString('vi-VN', {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
     hour: '2-digit',
-    minute: '2-digit'
-  })
+    minute: '2-digit',
+  });
 }
 
 function viewImportDetail(importId) {
-  router.push(`/invoiceImportIndex/${importId}`)
+  router.push(`/invoiceImportIndex/${importId}`);
 }
 
 onMounted(async () => {
   try {
-    const res = await axios.get('http://localhost:8083/StockImport')  // URL API backend
-    imports.value = res.data.map(item => ({
+    const res = await axios.get('http://localhost:8083/StockImport'); // URL API backend
+    imports.value = res.data.map((item) => ({
       importId: item.importId || item.import_id,
       import_date: item.importDate || item.import_date,
       status: item.status,
       total_cost: item.totalCost || item.total_cost,
-      employee_id: item.employeeId || item.employee_id
-    }))
+      employee_id: item.employeeId || item.employee_id,
+    }));
   } catch (error) {
-    console.error('Lỗi khi tải hóa đơn nhập hàng:', error)
+    console.error('Lỗi khi tải hóa đơn nhập hàng:', error);
   }
-})
+});
 </script>
 
 <template>
@@ -123,7 +120,12 @@ onMounted(async () => {
           <div class="header2">
             <div class="search-name">
               <font-awesome-icon class="icon" :icon="['fas', 'magnifying-glass']" />
-              <input v-model="searchKeyword" type="text" class="search-box" placeholder="Tìm kiếm theo mã hóa đơn" />
+              <input
+                v-model="searchKeyword"
+                type="text"
+                class="search-box"
+                placeholder="Tìm kiếm theo mã hóa đơn"
+              />
             </div>
 
             <div class="list-container">
@@ -151,7 +153,13 @@ onMounted(async () => {
                 </div>
               </div> -->
 
-              <button class="list-box" style="border-color:transparent;border-radius: 5px;width: 50%;" @click="resetFilters">Xóa lọc</button>
+              <button
+                class="list-box"
+                style="border-color: transparent; border-radius: 5px; width: 50%"
+                @click="resetFilters"
+              >
+                Xóa lọc
+              </button>
             </div>
           </div>
 
@@ -181,7 +189,6 @@ onMounted(async () => {
               </tr>
             </tbody>
           </table>
-
         </div>
       </div>
     </div>
@@ -284,59 +291,60 @@ onMounted(async () => {
   padding: 5px 10px;
   border-color: transparent;
   background-color: white;
-cursor: pointer;
-display: flex;
-justify-content: space-between;
-align-items: center;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .dropdown-container {
-position: relative;
-width: 33%;
+  position: relative;
+  width: 33%;
 }
 
 .dropdown-menu {
-position: absolute;
-background-color: white;
-border: 1px solid #828282;
-width: 100%;
-z-index: 10;
-box-shadow: 3px 3px 10px rgba(0,0,0,0.15);
-border-radius: 3px;
+  position: absolute;
+  background-color: white;
+  border: 1px solid #828282;
+  width: 100%;
+  z-index: 10;
+  box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.15);
+  border-radius: 3px;
 }
 
 .dropdown-menu div {
-padding: 5px 10px;
-cursor: pointer;
-font-size: 15px;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 15px;
 }
 
 .dropdown-menu div:hover {
-background-color: #eee;
+  background-color: #eee;
 }
 
 .custom-table {
-width: 100%;
-border-collapse: collapse;
-font-size: 16px;
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 16px;
 }
 
-.custom-table th, .custom-table td {
-padding: 8px;
-border: 1px solid #ccc;
-text-align: center;
+.custom-table th,
+.custom-table td {
+  padding: 8px;
+  border: 1px solid #ccc;
+  text-align: center;
 }
 
 .btn-view {
-background-color: #0088ff;
-border: none;
-border-radius: 3px;
-padding: 5px 10px;
-color: white;
-cursor: pointer;
+  background-color: #0088ff;
+  border: none;
+  border-radius: 3px;
+  padding: 5px 10px;
+  color: white;
+  cursor: pointer;
 }
 
 .icon {
-margin-right: 5px;
+  margin-right: 5px;
 }
 </style>

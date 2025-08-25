@@ -12,7 +12,6 @@
         </ul>
       </div>
 
-
       <div class="high-stock-warning">
         <h3>Sản phẩm tồn kho nhiều</h3>
         <ul>
@@ -26,14 +25,11 @@
   </div>
 </template>
 
-
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 
-
 // Khai báo danh sách sản phẩm sẽ lấy từ API
 const products = ref([]);
-
 
 // Gọi API để lấy dữ liệu sản phẩm
 onMounted(async () => {
@@ -46,19 +42,16 @@ onMounted(async () => {
   }
 });
 
-
 // Lọc sản phẩm có số lượng < 10
 const lowStockProducts = computed(() => {
-  return products.value.filter(product => parseInt(product.quantity) < 10);
+  return products.value.filter((product) => parseInt(product.quantity) < 10);
 });
-
 
 // Lọc sản phẩm có số lượng > 100
 const highStockProducts = computed(() => {
-  return products.value.filter(product => parseInt(product.quantity) > 100);
+  return products.value.filter((product) => parseInt(product.quantity) > 100);
 });
 </script>
-
 
 <style scoped>
 .inventory-container {
@@ -70,20 +63,19 @@ const highStockProducts = computed(() => {
   margin: 10px;
 }
 
-
 .stock-container {
   display: flex;
   justify-content: space-between;
   gap: 20px;
 }
 
-
-.low-stock-warning, .high-stock-warning {
+.low-stock-warning,
+.high-stock-warning {
   flex: 1;
 }
 
-
-.low-stock-warning h3, .high-stock-warning h3 {
+.low-stock-warning h3,
+.high-stock-warning h3 {
   font-size: 18px;
   font-weight: 600;
   color: #e74c3c;
@@ -92,14 +84,14 @@ const highStockProducts = computed(() => {
   width: 100%;
 }
 
-
-.low-stock-warning ul, .high-stock-warning ul {
+.low-stock-warning ul,
+.high-stock-warning ul {
   list-style-type: none;
   padding: 0;
 }
 
-
-.low-stock-warning li, .high-stock-warning li {
+.low-stock-warning li,
+.high-stock-warning li {
   background-color: #fff;
   border-radius: 10px;
   padding: 12px;
@@ -109,13 +101,11 @@ const highStockProducts = computed(() => {
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-
 .product-name {
   font-size: 16px;
   font-weight: 500;
   color: #333;
 }
-
 
 .stock-count {
   font-size: 14px;
@@ -125,6 +115,3 @@ const highStockProducts = computed(() => {
   border-radius: 8px;
 }
 </style>
-
-
-

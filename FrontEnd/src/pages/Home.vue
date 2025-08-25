@@ -1,5 +1,5 @@
 <script setup>
-import Mainpage from '../components/Mainpage.vue'
+import Mainpage from '../components/Mainpage.vue';
 import TheHeader from '@/components/TheHeader.vue';
 import { RouterLink } from 'vue-router';
 // const role = response.data.position;
@@ -8,7 +8,7 @@ import { RouterLink } from 'vue-router';
 
 <template>
   <div class="temp">
-    <Mainpage class="main-left"/>
+    <Mainpage class="main-left" />
     <div class="main-right">
       <TheHeader />
       <div class="container">
@@ -22,22 +22,21 @@ import { RouterLink } from 'vue-router';
         </div>
 
         <div class="dashboard-grid">
-           <router-link style="text-decoration: none; color:#fff" to="/importProduct">
-              <div class="dashboard-card" style="background-color: #ff6b6b;">➕ Nhập hàng mới</div>
-            </router-link>
+          <router-link style="text-decoration: none; color: #fff" to="/importProduct">
+            <div class="dashboard-card" style="background-color: #ff6b6b">➕ Nhập hàng mới</div>
+          </router-link>
 
-            <router-link style="text-decoration: none; color:#333" to="/createProduct">
-              <div class="dashboard-card" style="background-color: #ffd93d;">➕ Thêm sản phẩm</div>
-            </router-link>
+          <router-link style="text-decoration: none; color: #333" to="/createProduct">
+            <div class="dashboard-card" style="background-color: #ffd93d">➕ Thêm sản phẩm</div>
+          </router-link>
 
-            <router-link style="text-decoration: none; color:#fff" to="/createOrder">
-              <div class="dashboard-card" style="background-color: #4cd964;">🧾 Tạo đơn bán hàng</div>
-            </router-link>
+          <router-link style="text-decoration: none; color: #fff" to="/createOrder">
+            <div class="dashboard-card" style="background-color: #4cd964">🧾 Tạo đơn bán hàng</div>
+          </router-link>
 
-            <router-link style="text-decoration: none; color:#fff" to="/detail/Employee">
-              <div class="dashboard-card" style="background-color: #c084fc;">👨‍💼 Quản lý nhân viên</div>
-            </router-link>
-
+          <router-link style="text-decoration: none; color: #fff" to="/detail/Employee">
+            <div class="dashboard-card" style="background-color: #c084fc">👨‍💼 Quản lý nhân viên</div>
+          </router-link>
         </div>
 
         <div class="custom-border">
@@ -74,7 +73,6 @@ import { RouterLink } from 'vue-router';
   flex-direction: column;
   z-index: 1; /* thấp hơn sidebar */
 }
-
 
 .container {
   padding: 30px;

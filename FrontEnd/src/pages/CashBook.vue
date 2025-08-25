@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
-import MainPage from '../components/Mainpage.vue'
-import TheHeader from '../components/TheHeader.vue'
+import MainPage from '../components/Mainpage.vue';
+import TheHeader from '../components/TheHeader.vue';
 import axios from 'axios';
 
 const months = ref([]);
@@ -14,9 +14,8 @@ const detailEntries = ref([]);
 const isCurrentMonthYear = ref(false);
 const isEndOfMonth = ref(false);
 const showConfirm = ref(false);
-const confirmMessage = ref("");
+const confirmMessage = ref('');
 const confirmAction = ref(null);
-
 
 const rent = ref(0);
 const electricity = ref(0);
@@ -35,11 +34,13 @@ const fetchYears = async () => {
 
 const fetchDetails = async (cashBookId, month, year) => {
   try {
-  console.log("CashBook ID:", cashBookId);
-    const res = await axios.get(`http://localhost:8083/api/cashbook-details/${cashBookId}?month=${month}&year=${year}`);
+    console.log('CashBook ID:', cashBookId);
+    const res = await axios.get(
+      `http://localhost:8083/api/cashbook-details/${cashBookId}?month=${month}&year=${year}`
+    );
     detailEntries.value = res.data;
   } catch (err) {
-    console.error("Lỗi khi lấy chi tiết sổ quũ:", err);
+    console.error('Lỗi khi lấy chi tiết sổ quũ:', err);
   }
 };
 
@@ -54,8 +55,10 @@ const fetchSummary = async () => {
   loading.value = true;
 
   try {
-    const res = await axios.get(`http://localhost:8083/api/cashbook/${selectedMonth.value}/${selectedYear.value}`);
-    
+    const res = await axios.get(
+      `http://localhost:8083/api/cashbook/${selectedMonth.value}/${selectedYear.value}`
+    );
+
     if (!res.data || Object.keys(res.data).length === 0) {
       summary.value = null;
       detailEntries.value = [];
@@ -63,15 +66,14 @@ const fetchSummary = async () => {
     }
     isCurrentMonthYear.value = res.data.currentMonthYear;
 
+    if (isCurrentMonthYear.value) {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = today.getMonth() + 1;
 
-if (isCurrentMonthYear.value) {
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = today.getMonth() + 1;
-
-  const lastDay = new Date(year, month, 0).getDate(); // ngày cuối tháng
-  isEndOfMonth.value = today.getDate() === lastDay;
-}
+      const lastDay = new Date(year, month, 0).getDate(); // ngày cuối tháng
+      isEndOfMonth.value = today.getDate() === lastDay;
+    }
 
     summary.value = res.data;
     rent.value = res.data.rent;
@@ -85,9 +87,8 @@ if (isCurrentMonthYear.value) {
     } else {
       detailEntries.value = [];
     }
-
   } catch (err) {
-    console.error("Lỗi khi lấy sổ quỹ:", err);
+    console.error('Lỗi khi lấy sổ quỹ:', err);
     summary.value = null;
     detailEntries.value = [];
   } finally {
@@ -103,7 +104,7 @@ const onCurrencyInput = (event, field) => {
   if (field === 'totalSalary') totalSalary.value = number;
 };
 const confirmSave = () => {
-  confirmMessage.value = "Bạn có chắc muốn lưu kết sổ tháng này?";
+  confirmMessage.value = 'Bạn có chắc muốn lưu kết sổ tháng này?';
   showConfirm.value = true;
   confirmAction.value = async () => {
     try {
@@ -111,13 +112,13 @@ const confirmSave = () => {
         ...summary.value,
         electricity: electricity.value,
         water: water.value,
-        salary: totalSalary.value // Bao gồm lương trong cập nhật
+        salary: totalSalary.value, // Bao gồm lương trong cập nhật
       });
       showConfirm.value = false;
       await fetchSummary();
     } catch (err) {
-      console.error("Lỗi khi lưu kết sổ:", err);
-      confirmMessage.value = "❌ Có lỗi khi lưu kết sổ. Vui lòng thử lại.";
+      console.error('Lỗi khi lưu kết sổ:', err);
+      confirmMessage.value = '❌ Có lỗi khi lưu kết sổ. Vui lòng thử lại.';
       showConfirm.value = true;
       confirmAction.value = null;
     }
@@ -127,26 +128,23 @@ onMounted(async () => {
   try {
     await axios.post('http://localhost:8083/api/cashbook/generate-auto');
   } catch (err) {
-    console.error("Lỗi khi gọi generate-auto:", err); // 👈 không để vue crash
+    console.error('Lỗi khi gọi generate-auto:', err); // 👈 không để vue crash
   }
 
   try {
     await fetchMonths();
     await fetchYears();
-    console.log("Months loaded:", months.value);
+    console.log('Months loaded:', months.value);
     if (months.value.length > 0) selectedMonth.value = months.value[0];
     if (years.value.length > 0) selectedYear.value = years.value[0];
   } catch (err) {
-    console.error("Lỗi khi fetch months/years:", err);
+    console.error('Lỗi khi fetch months/years:', err);
   }
 });
 
-
-
-
 const handleSave = () => {
   if (!isEndOfMonth.value) {
-    confirmMessage.value = "❌ Chưa đến cuối tháng, không thể kết sổ!";
+    confirmMessage.value = '❌ Chưa đến cuối tháng, không thể kết sổ!';
     showConfirm.value = true;
     confirmAction.value = null;
     return;
@@ -155,18 +153,17 @@ const handleSave = () => {
   confirmSave();
 };
 
-
-const formatCurrency = amount => {
+const formatCurrency = (amount) => {
   return new Intl.NumberFormat('vi-VN', {
     style: 'currency',
-    currency: 'VND'
+    currency: 'VND',
   }).format(amount);
 };
 
 const costs = [
   { label: 'Tiền thuê nhà', model: rent },
   { label: 'Tiền điện', model: electricity },
-  { label: 'Tiền nước', model: water }
+  { label: 'Tiền nước', model: water },
 ];
 </script>
 
@@ -176,8 +173,8 @@ const costs = [
     <div class="container">
       <div class="page">
         <TheHeader />
-        <div class ="page-main">
-            <div class="cashbook-page">
+        <div class="page-main">
+          <div class="cashbook-page">
             <h2>Xem Sổ Qũy Theo Tháng</h2>
 
             <div class="filters" v-if="months.length && years.length">
@@ -191,15 +188,24 @@ const costs = [
               </select>
               <button @click="fetchSummary">Xem sổ qũy</button>
             </div>
-            
+
             <div v-if="loading">\u0110ang tải dữ liệu...</div>
 
             <div v-if="summary">
               <div class="stats">
-                <div class="card">Tổng thu: <span>{{ formatCurrency(summary.totalIncome) }}</span></div>
-                <div class="card">Tổng chi: <span>{{ formatCurrency(summary.totalExpense) }}</span></div>
-                <div class="card">Lợi nhuận trước chi phí: <span>{{ formatCurrency(summary.profitBeforeCost) }}</span></div>
-                <div class="card highlight">Lợi nhuận thực tế: <span>{{ formatCurrency(summary.actualProfit) }}</span></div>
+                <div class="card">
+                  Tổng thu: <span>{{ formatCurrency(summary.totalIncome) }}</span>
+                </div>
+                <div class="card">
+                  Tổng chi: <span>{{ formatCurrency(summary.totalExpense) }}</span>
+                </div>
+                <div class="card">
+                  Lợi nhuận trước chi phí:
+                  <span>{{ formatCurrency(summary.profitBeforeCost) }}</span>
+                </div>
+                <div class="card highlight">
+                  Lợi nhuận thực tế: <span>{{ formatCurrency(summary.actualProfit) }}</span>
+                </div>
               </div>
 
               <table>
@@ -224,77 +230,74 @@ const costs = [
               </table>
 
               <div class="cost-summary">
-  <h3>Chi phí vận hành</h3>
+                <h3>Chi phí vận hành</h3>
 
-  <div class="cost-row" v-if="rent">
-    <span>Tiền thuê nhà:</span>
-    <strong>{{ formatCurrency(rent) }}</strong>
-  </div>
+                <div class="cost-row" v-if="rent">
+                  <span>Tiền thuê nhà:</span>
+                  <strong>{{ formatCurrency(rent) }}</strong>
+                </div>
 
-  <div class="cost-row">
-    <span>Tiền điện:</span>
-    <strong v-if="!isCurrentMonthYear">{{ formatCurrency(electricity) }}</strong>
-    <input
-      v-else
-      type="text"
-      :value="formatCurrency(electricity)"
-      @input="onCurrencyInput($event, 'electricity')"
-    />
-  </div>
+                <div class="cost-row">
+                  <span>Tiền điện:</span>
+                  <strong v-if="!isCurrentMonthYear">{{ formatCurrency(electricity) }}</strong>
+                  <input
+                    v-else
+                    type="text"
+                    :value="formatCurrency(electricity)"
+                    @input="onCurrencyInput($event, 'electricity')"
+                  />
+                </div>
 
-  <div class="cost-row">
-    <span>Tiền nước:</span>
-    <strong v-if="!isCurrentMonthYear">{{ formatCurrency(water) }}</strong>
-    <input
-      v-else
-      type="text"
-      :value="formatCurrency(water)"
-      @input="onCurrencyInput($event, 'water')"
-    />
-  </div>
+                <div class="cost-row">
+                  <span>Tiền nước:</span>
+                  <strong v-if="!isCurrentMonthYear">{{ formatCurrency(water) }}</strong>
+                  <input
+                    v-else
+                    type="text"
+                    :value="formatCurrency(water)"
+                    @input="onCurrencyInput($event, 'water')"
+                  />
+                </div>
 
-  <div class="cost-row" v-if="totalSalary">
-  <span>Tổng lương nhân viên:</span>
-  <strong v-if="!isCurrentMonthYear">{{ formatCurrency(totalSalary) }}</strong>
-  <input
-    v-else
-    type="text"
-    :value="formatCurrency(totalSalary)"
-    @input="onCurrencyInput($event, 'totalSalary')"
-  />
-</div>
+                <div class="cost-row" v-if="totalSalary">
+                  <span>Tổng lương nhân viên:</span>
+                  <strong v-if="!isCurrentMonthYear">{{ formatCurrency(totalSalary) }}</strong>
+                  <input
+                    v-else
+                    type="text"
+                    :value="formatCurrency(totalSalary)"
+                    @input="onCurrencyInput($event, 'totalSalary')"
+                  />
+                </div>
 
-  <div class="cost-row total" v-if="rent || electricity || water || totalSalary">
-    <span>Tổng chi phí vận hành:</span>
-    <strong>{{ formatCurrency(rent + electricity + water + totalSalary) }}</strong>
-  </div>
+                <div class="cost-row total" v-if="rent || electricity || water || totalSalary">
+                  <span>Tổng chi phí vận hành:</span>
+                  <strong>{{ formatCurrency(rent + electricity + water + totalSalary) }}</strong>
+                </div>
 
-  <div class="cost-row profit" v-if="summary.actualProfit !== undefined">
-    <span>Lợi nhuận thực tế:</span>
-    <strong>{{ formatCurrency(summary.actualProfit) }}</strong>
-  </div>
+                <div class="cost-row profit" v-if="summary.actualProfit !== undefined">
+                  <span>Lợi nhuận thực tế:</span>
+                  <strong>{{ formatCurrency(summary.actualProfit) }}</strong>
+                </div>
 
-  <div v-if="isCurrentMonthYear" class="save-footer">
-    <button @click="handleSave" class="save-button">Lưu kết sổ</button>
-  </div>
-</div>
-
+                <div v-if="isCurrentMonthYear" class="save-footer">
+                  <button @click="handleSave" class="save-button">Lưu kết sổ</button>
+                </div>
+              </div>
             </div>
-
           </div>
         </div>
       </div>
     </div>
     <div v-if="showConfirm" class="modal-overlay">
-  <div class="modal-box">
-    <p>{{ confirmMessage }}</p>
-    <div class="modal-buttons">
-      <button v-if="confirmAction" @click="confirmAction" class="yes-button">Đóng</button>
-      <button @click="showConfirm = false" class="no-button">Thoát</button>
+      <div class="modal-box">
+        <p>{{ confirmMessage }}</p>
+        <div class="modal-buttons">
+          <button v-if="confirmAction" @click="confirmAction" class="yes-button">Đóng</button>
+          <button @click="showConfirm = false" class="no-button">Thoát</button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-
   </div>
 </template>
 
@@ -312,7 +315,7 @@ body {
 }
 
 .container {
-  flex: 1; 
+  flex: 1;
   display: flex;
   flex-direction: column;
   background-color: #fff;
@@ -326,13 +329,13 @@ body {
   flex-direction: column;
   background-color: #fff;
   position: relative;
-  font-family:Arial, Helvetica, sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
 }
-.page-main{
-    display: flex;
-    flex-direction: column;
-    margin-top: 6%;
-    padding: 0px 30px;
+.page-main {
+  display: flex;
+  flex-direction: column;
+  margin-top: 6%;
+  padding: 0px 30px;
 }
 .cashbook-page {
   padding: 24px;
@@ -345,7 +348,8 @@ body {
   margin-bottom: 20px;
 }
 
-select, button {
+select,
+button {
   padding: 6px 12px;
   font-size: 14px;
   border-radius: 6px;
@@ -384,7 +388,8 @@ table {
   margin-top: 20px;
 }
 
-th, td {
+th,
+td {
   padding: 10px;
   border: 1px solid #ccc;
   text-align: left;
@@ -425,7 +430,7 @@ th, td {
   font-weight: 700;
 }
 .row-in {
-  background-color: #ffffff; 
+  background-color: #ffffff;
 }
 
 .row-out {
@@ -488,7 +493,7 @@ th, td {
   border-radius: 6px;
   cursor: pointer;
 }
-.cost-row input[type="number"] {
+.cost-row input[type='number'] {
   border: none;
   background: transparent;
   font-weight: bold;
@@ -499,10 +504,10 @@ th, td {
   padding-right: 0;
   outline: none;
 }
-.cost-row input[type="number"]::placeholder {
+.cost-row input[type='number']::placeholder {
   color: #000;
 }
-.cost-row input[type="text"] {
+.cost-row input[type='text'] {
   border: none;
   background: transparent;
   font-weight: bold;
@@ -545,7 +550,8 @@ th, td {
   gap: 16px;
 }
 
-.yes-button, .no-button {
+.yes-button,
+.no-button {
   padding: 6px 14px;
   border: none;
   border-radius: 6px;
@@ -562,5 +568,4 @@ th, td {
   background-color: #e74c3c;
   color: white;
 }
-
 </style>

@@ -1,13 +1,13 @@
 <script setup>
-import Mainpage from '../../components/Mainpage.vue'
+import Mainpage from '../../components/Mainpage.vue';
 import TheHeader from '../../components/TheHeader.vue';
 import Toast from '../../components/Toast.vue';
 const toastRef = ref();
-import { ref, onMounted} from 'vue';
-import { useRouter, useRoute} from 'vue-router'; 
+import { ref, onMounted } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 
 const router = useRouter();
-const route = useRoute(); 
+const route = useRoute();
 
 import axios from 'axios';
 
@@ -15,12 +15,12 @@ const customers = ref([]);
 const phone = ref(route.query.phone || '');
 const points = ref(route.query.points || '');
 
-const showAddCustomerForm = ref(false);  // Trạng thái hiển thị form
+const showAddCustomerForm = ref(false); // Trạng thái hiển thị form
 const newCustomer = ref({
   name: '',
   phone: '',
   date_of_birth: '',
-  points: 0
+  points: 0,
 });
 
 const fetchCustomers = async () => {
@@ -35,15 +35,15 @@ const fetchCustomers = async () => {
 const addCustomer = async () => {
   try {
     const response = await axios.post('http://localhost:8083/api/customers', newCustomer.value);
-    customers.value.push(response.data);  
+    customers.value.push(response.data);
     // alert('Thêm khách hàng thành công!');
     toastRef.value.show('Thêm khách hàng thành công!', 'success');
-    showAddCustomerForm.value = false;  
-    resetNewCustomer();  // Xóa form
+    showAddCustomerForm.value = false;
+    resetNewCustomer(); // Xóa form
     router.push('/detail/Customer/Home');
   } catch (error) {
     console.error('Lỗi khi thêm khách hàng:', error);
-    // alert('Lỗi khi thêm khách hàng'); 
+    // alert('Lỗi khi thêm khách hàng');
     toastRef.value.show('Lỗi khi thêm khách hàng!', 'error');
   }
 };
@@ -53,59 +53,66 @@ const resetNewCustomer = () => {
     name: '',
     phone: '',
     date_of_birth: '',
-    points: 0
+    points: 0,
   };
 };
-
 
 onMounted(() => {
   fetchCustomers();
   newCustomer.value.phone = phone.value;
   newCustomer.value.points = Number(points.value);
 });
-
 </script>
 
-
 <template>
-    <div class="temp">
-        <Mainpage />
-        <div class="main-right">
-            <TheHeader />
-            <div class="container">
-                <!-- form add -->
-                <div class="add-customer-form">
-                  <h4>Thêm khách hàng mới</h4>
-                  <form @submit.prevent="addCustomer">
-                    <div>
-                      <label for="name">Tên khách hàng:</label>
-                      <input v-model="newCustomer.name" type="text" id="name" required />
-                    </div>
-                    <div>
-                      <label for="phone">Số điện thoại:</label>
-                      <input v-model="newCustomer.phone" type="text" id="phone" readonly class="readonly-input" />
-                    </div>
-                    <div>
-                      <label for="date_of_birth">Ngày sinh:</label>
-                      <input v-model="newCustomer.date_of_birth" type="date" id="date_of_birth" required />
-                    </div>
-                    <div>
-                      <label for="points">Điểm tích lũy:</label>
-                      <input v-model="newCustomer.points" type="number" id="points" readonly class="readonly-input"/>
-                    </div>
-                    <div class="button-group">
-                      <button type="submit">Lưu</button>
-                    
-                      <router-link to="/invoice" class="cancel-button">Hủy</router-link>
-
-                      
-                    </div>
-                  </form>
-                </div>
+  <div class="temp">
+    <Mainpage />
+    <div class="main-right">
+      <TheHeader />
+      <div class="container">
+        <!-- form add -->
+        <div class="add-customer-form">
+          <h4>Thêm khách hàng mới</h4>
+          <form @submit.prevent="addCustomer">
+            <div>
+              <label for="name">Tên khách hàng:</label>
+              <input v-model="newCustomer.name" type="text" id="name" required />
             </div>
+            <div>
+              <label for="phone">Số điện thoại:</label>
+              <input
+                v-model="newCustomer.phone"
+                type="text"
+                id="phone"
+                readonly
+                class="readonly-input"
+              />
+            </div>
+            <div>
+              <label for="date_of_birth">Ngày sinh:</label>
+              <input v-model="newCustomer.date_of_birth" type="date" id="date_of_birth" required />
+            </div>
+            <div>
+              <label for="points">Điểm tích lũy:</label>
+              <input
+                v-model="newCustomer.points"
+                type="number"
+                id="points"
+                readonly
+                class="readonly-input"
+              />
+            </div>
+            <div class="button-group">
+              <button type="submit">Lưu</button>
+
+              <router-link to="/invoice" class="cancel-button">Hủy</router-link>
+            </div>
+          </form>
         </div>
+      </div>
     </div>
-    <Toast ref="toastRef" />
+  </div>
+  <Toast ref="toastRef" />
 </template>
 
 <style scoped>
@@ -128,47 +135,47 @@ onMounted(() => {
     font-family:'Noto Sans', sans-serif;
     display:flex;
 } */
-body{
-    width: 100%;
-    height:100%;
+body {
+  width: 100%;
+  height: 100%;
 }
 
-.temp{
-    position:absolute;
-    width: 100%;
-    height:100vh;
-    /* font-size: 20px; */
-    top:0;
-    left:0;
-    margin: 0;
-    padding:0;
-    font-family:'Noto Sans', sans-serif;
-    display:flex;
+.temp {
+  position: absolute;
+  width: 100%;
+  height: 100vh;
+  /* font-size: 20px; */
+  top: 0;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  font-family: 'Noto Sans', sans-serif;
+  display: flex;
 }
-.main-right{
-    margin-left: 18%;
-    top:0;
-    background-color: #f5f5f5;
-    flex:1;
-    display:flex;
-    flex-direction: column;
-}
-
-.container{
-    width: 96%;
-    background-color: none;
-    display: flex;
-    flex-direction: column;
-    gap:10px;
-    margin-top:90px;
-    margin-left:2%;
+.main-right {
+  margin-left: 18%;
+  top: 0;
+  background-color: #f5f5f5;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
-.header2{
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.container {
+  width: 96%;
+  background-color: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 90px;
+  margin-left: 2%;
+}
+
+.header2 {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 /* form */
@@ -190,7 +197,7 @@ body{
 }
 
 .add-customer-form button {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   padding: 10px;
   border: none;
@@ -199,7 +206,7 @@ body{
   margin-top: 10px;
 }
 
-.add-customer-form button[type="button"] {
+.add-customer-form button[type='button'] {
   background-color: #f44336; /* Nút hủy */
 }
 
@@ -207,10 +214,9 @@ body{
   background-color: #45a049;
 }
 
-.add-customer-form button[type="button"]:hover {
+.add-customer-form button[type='button']:hover {
   background-color: #e53935;
 }
-
 
 .cancel-button {
   display: inline-block;
@@ -228,19 +234,19 @@ body{
   background-color: #e53935;
 }
 
-.add-button{
-    background-color: #0088ff;
-    padding:10px 20px 10px 20px;
-    /* padding:10px; */
-    border-color: transparent;
-    border-radius: 5px;
-    font-weight: 600;
-    color:white;
-    cursor: pointer;
+.add-button {
+  background-color: #0088ff;
+  padding: 10px 20px 10px 20px;
+  /* padding:10px; */
+  border-color: transparent;
+  border-radius: 5px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
 }
 .readonly-input {
-  pointer-events: none;   /* Không cho click hay focus */
-  background-color: #f0f0f0;  /* Tùy chỉnh để trông giống input bị khóa */
+  pointer-events: none; /* Không cho click hay focus */
+  background-color: #f0f0f0; /* Tùy chỉnh để trông giống input bị khóa */
   color: #000;
 }
 
@@ -249,5 +255,4 @@ body{
   gap: 20px;
   margin-top: 10px;
 }
-
 </style>

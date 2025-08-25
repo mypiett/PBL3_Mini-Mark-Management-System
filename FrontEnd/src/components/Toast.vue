@@ -45,7 +45,9 @@ defineExpose({ show });
   color: white;
   box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
   opacity: 1;
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
   min-width: 240px;
 }
 

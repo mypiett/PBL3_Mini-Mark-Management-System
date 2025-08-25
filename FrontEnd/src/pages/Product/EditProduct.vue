@@ -5,15 +5,12 @@ import { useRoute, useRouter } from 'vue-router';
 import MainPage from '../../components/Mainpage.vue';
 import TheHeader from '../../components/TheHeader.vue';
 
-
 axios.defaults.baseURL = 'http://localhost:8083';
-
 
 const route = useRoute();
 const router = useRouter();
 const productId = route.params.id;
-console.log("Product ID:", productId);
-
+console.log('Product ID:', productId);
 
 const product = ref({
   productId: '',
@@ -26,22 +23,19 @@ const product = ref({
   img: '',
   categoryId: '',
   supplierId: '',
-  status: 'Hiển thị',  // trạng thái hiển thị ở giao diện
-  displayOrder: 0
+  status: 'Hiển thị', // trạng thái hiển thị ở giao diện
+  displayOrder: 0,
 });
-
 
 const categories = ref([]);
 const suppliers = ref([]);
 const message = ref('');
-
 
 // Hàm format ngày yyyy-mm-dd để input date nhận
 const formatDateOnly = (isoString) => {
   if (!isoString) return '';
   return isoString.split('T')[0];
 };
-
 
 // Map status backend <-> frontend
 const mapStatusToLabel = (status) => {
@@ -51,7 +45,6 @@ const mapLabelToStatus = (label) => {
   return label === 'Hiển thị' ? 'ACTIVE' : 'INACTIVE';
 };
 
-
 onMounted(async () => {
   try {
     const res1 = await axios.get('/api/products/categories');
@@ -59,31 +52,28 @@ onMounted(async () => {
     categories.value = res1.data;
     suppliers.value = res2.data;
 
-
     const productRes = await axios.get(`/api/products/${productId}`);
     const existingProduct = productRes.data;
 
-
     product.value = {
-      productId: existingProduct.product_id,  // backend trả về snake_case
+      productId: existingProduct.product_id, // backend trả về snake_case
       name: existingProduct.name,
       quantity: existingProduct.quantity,
       price: existingProduct.stock_price,
-      stock_price: existingProduct.stock_price,  // giá nhập
+      stock_price: existingProduct.stock_price, // giá nhập
       sell: existingProduct.sell,
       img: existingProduct.img,
       expirationDate: formatDateOnly(existingProduct.expiration_date),
       categoryId: existingProduct.category?.categoryId?.toString() ?? '',
       supplierId: existingProduct.supplier?.supplierId?.toString() ?? '',
       status: mapStatusToLabel(existingProduct.status),
-      displayOrder: existingProduct.displayOrder || 0
+      displayOrder: existingProduct.displayOrder || 0,
     };
   } catch (error) {
-    console.error("Lỗi khi tải dữ liệu:", error.response?.data || error);
+    console.error('Lỗi khi tải dữ liệu:', error.response?.data || error);
     message.value = 'Không thể tải dữ liệu sản phẩm hoặc danh mục!';
   }
 });
-
 
 const updateProduct = async () => {
   console.log('==== Bắt đầu cập nhật sản phẩm ====');
@@ -98,9 +88,8 @@ const updateProduct = async () => {
     category_id: product.value.categoryId,
     supplier_id: product.value.supplierId,
     status: mapLabelToStatus(product.value.status),
-    displayOrder: product.value.displayOrder
+    displayOrder: product.value.displayOrder,
   });
-
 
   if (!product.value.name || !product.value.categoryId || !product.value.supplierId) {
     message.value = 'Vui lòng điền đầy đủ các trường bắt buộc!';
@@ -108,27 +97,28 @@ const updateProduct = async () => {
     return;
   }
 
-
   try {
-    const response = await axios.put(`/api/products/${productId}`, {
-      product_id: product.value.productId,
-      name: product.value.name,
-      quantity: product.value.quantity,
-      price: product.value.stock_price,
-      expirationDate: product.value.expirationDate,
-      sell: product.value.sell,
-      img: product.value.img,
-      category_id: product.value.categoryId,
-      supplier_id: product.value.supplierId,
-      status: mapLabelToStatus(product.value.status),
-      displayOrder: product.value.displayOrder
-    },
-    {
-  headers: {
-    'Content-Type': 'application/json'
-  }
-});
-
+    const response = await axios.put(
+      `/api/products/${productId}`,
+      {
+        product_id: product.value.productId,
+        name: product.value.name,
+        quantity: product.value.quantity,
+        price: product.value.stock_price,
+        expirationDate: product.value.expirationDate,
+        sell: product.value.sell,
+        img: product.value.img,
+        category_id: product.value.categoryId,
+        supplier_id: product.value.supplierId,
+        status: mapLabelToStatus(product.value.status),
+        displayOrder: product.value.displayOrder,
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
 
     console.log('Server trả về sau khi cập nhật:', response.data);
     message.value = 'Sản phẩm đã được cập nhật';
@@ -138,14 +128,7 @@ const updateProduct = async () => {
     message.value = 'Cập nhật sản phẩm thất bại!';
   }
 };
-
-
 </script>
-
-
-
-
-
 
 <template>
   <div class="main-container">
@@ -164,18 +147,20 @@ const updateProduct = async () => {
                   <label>Danh mục <span class="required">*</span></label>
                   <select v-model="product.categoryId">
                     <option disabled value="">Chọn danh mục</option>
-                    <option v-for="cat in categories" :key="cat.categoryId" :value="String(cat.categoryId)">
+                    <option
+                      v-for="cat in categories"
+                      :key="cat.categoryId"
+                      :value="String(cat.categoryId)"
+                    >
                       {{ cat.name }}
                     </option>
                   </select>
                 </div>
 
-
                 <div class="form-group">
                   <label>Tên sản phẩm <span class="required">*</span></label>
                   <input v-model="product.name" type="text" />
                 </div>
-
 
                 <div class="form-group">
                   <label>Giá nhập</label>
@@ -186,18 +171,15 @@ const updateProduct = async () => {
                   <span class="readonly-input">{{ product.price.toLocaleString() }} đ</span>
                 </div> -->
 
-
                 <div class="form-group">
                   <label>Số lượng</label>
                   <input type="number" v-model="product.quantity" />
                 </div>
 
-
                 <div class="form-group">
                   <label>Mã sản phẩm</label>
                   <span class="readonly-input">{{ productId }}</span>
                 </div>
-
 
                 <div class="form-group">
                   <label>Ngày hết hạn</label>
@@ -205,30 +187,35 @@ const updateProduct = async () => {
                 </div>
               </div>
 
-
               <!-- Right -->
               <div class="right-form">
                 <div class="form-group">
                   <label>Hình đại diện (600x400)</label>
                   <input type="text" v-model="product.img" placeholder="URL ảnh hoặc chọn ảnh" />
                   <div v-if="product.img" class="image-preview">
-                    <img :src="product.img" alt="Ảnh sản phẩm" style="width: 100%; max-width: 300px; margin-top: 10px;" />
+                    <img
+                      :src="product.img"
+                      alt="Ảnh sản phẩm"
+                      style="width: 100%; max-width: 300px; margin-top: 10px"
+                    />
                   </div>
                 </div>
-
 
                 <div class="form-group">
                   <label>Nhà cung cấp <span class="required">*</span></label>
                   <select v-model="product.supplierId">
                     <option disabled value="">Chọn nhà cung cấp</option>
-                    <option v-for="sup in suppliers" :key="sup.supplierId" :value="String(sup.supplierId)">
+                    <option
+                      v-for="sup in suppliers"
+                      :key="sup.supplierId"
+                      :value="String(sup.supplierId)"
+                    >
                       {{ sup.name }}
                     </option>
                   </select>
                 </div>
               </div>
             </div>
-
 
             <!-- Buttons -->
             <div class="button-group">
@@ -241,7 +228,6 @@ const updateProduct = async () => {
     </div>
   </div>
 </template>
-
 
 <style scoped>
 body {
@@ -373,6 +359,3 @@ a {
   user-select: text;
 }
 </style>
-
-
-

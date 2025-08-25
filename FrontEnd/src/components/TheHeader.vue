@@ -2,7 +2,6 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 
-
 // Kiểm soát trạng thái dropdown tìm kiếm
 const Check = ref(false);
 const CheckRef = ref(null);
@@ -10,33 +9,45 @@ const storedUser = ref(null);
 
 const userName = computed(() => storedUser.value?.name || 'Tài khoản');
 
-
 // Tab hiện tại đang được chọn
 const activeTab = ref('product');
 const searchInput = ref('');
 const searchResults = ref([]);
 const isSearching = ref(false);
 
-
 // Lấy thông tin tab tương ứng để hiển thị nội dung và icon
-const bellTab = computed(() => tabs.find(tab => tab.id === activeTab.value) || tabs[0]);
-const currentTab = computed(() => listSearch.find(tab => tab.id === activeTab.value) || listSearch[0]);
-
+const bellTab = computed(() => tabs.find((tab) => tab.id === activeTab.value) || tabs[0]);
+const currentTab = computed(
+  () => listSearch.find((tab) => tab.id === activeTab.value) || listSearch[0]
+);
 
 const route = useRouter();
 
-
-function toInformationAccount(){
-  route.push({path: '/detailEmployee', query:{employee_id: storedUser.value.employee_id}});
+function toInformationAccount() {
+  route.push({ path: '/detailEmployee', query: { employee_id: storedUser.value.employee_id } });
 }
 // Danh sách các tab tìm kiếm
 const listSearch = [
-  { id: 'product', name: 'Sản phẩm', message: 'Nhập từ khóa để tìm kiếm sản phẩm', icon: 'fa-solid fa-box' },
+  {
+    id: 'product',
+    name: 'Sản phẩm',
+    message: 'Nhập từ khóa để tìm kiếm sản phẩm',
+    icon: 'fa-solid fa-box',
+  },
   // { id: 'order', name: 'Đơn hàng', message: 'Nhập từ khóa để tìm kiếm đơn hàng', icon: 'fa-solid fa-receipt' },
-  { id: 'customer', name: 'Khách hàng', message: 'Nhập từ khóa để tìm kiếm khách hàng', icon: 'fa-solid fa-user' },
-  { id: 'supplier', name: 'Nhà cung cấp', message: 'Nhập từ khóa để tìm kiếm nhà cung cấp', icon: 'fa-solid fa-truck' },
+  {
+    id: 'customer',
+    name: 'Khách hàng',
+    message: 'Nhập từ khóa để tìm kiếm khách hàng',
+    icon: 'fa-solid fa-user',
+  },
+  {
+    id: 'supplier',
+    name: 'Nhà cung cấp',
+    message: 'Nhập từ khóa để tìm kiếm nhà cung cấp',
+    icon: 'fa-solid fa-truck',
+  },
 ];
-
 
 // Các trạng thái liên quan đến dropdown khác
 const showDropdown = ref(false);
@@ -47,12 +58,10 @@ const showNotification = ref(false);
 const notificationRef = ref(null);
 const showSubMenu = ref(false);
 
-
 function SearchDropdown(event) {
   event.stopPropagation();
   Check.value = !Check.value;
 }
-
 
 function handleClickOutsideSearch(event) {
   if (CheckRef.value && !CheckRef.value.contains(event.target)) {
@@ -60,12 +69,10 @@ function handleClickOutsideSearch(event) {
   }
 }
 
-
 function toggleDropdown(event) {
   event.stopPropagation();
   showDropdown.value = !showDropdown.value;
 }
-
 
 function toggleHelpDropdown(event) {
   event.stopPropagation();
@@ -75,31 +82,26 @@ function toggleHelpDropdown(event) {
   }
 }
 
-
 function toggleSubMenu(event) {
   event.stopPropagation();
   showSubMenu.value = !showSubMenu.value;
 }
-
 
 function toggleNotification(event) {
   event.stopPropagation();
   showNotification.value = !showNotification.value;
 }
 
-
 function changeTab(tabId) {
   activeTab.value = tabId;
   fetchSearchResults();
 }
-
 
 function handleClickOutsideProfile(event) {
   if (profileRef.value && !profileRef.value.contains(event.target)) {
     showDropdown.value = false;
   }
 }
-
 
 function handleClickOutsideHelp(event) {
   if (helpRef.value && !helpRef.value.contains(event.target)) {
@@ -108,19 +110,16 @@ function handleClickOutsideHelp(event) {
   }
 }
 
-
 function handleClickOutsideNotification(event) {
   if (notificationRef.value && !notificationRef.value.contains(event.target)) {
     showNotification.value = false;
   }
 }
 
-
 // Gọi API và lọc dữ liệu tìm kiếm theo từ khóa
 async function fetchSearchResults() {
   isSearching.value = true;
   searchResults.value = [];
-
 
   const query = searchInput.value.trim();
   if (!query) {
@@ -128,29 +127,29 @@ async function fetchSearchResults() {
     return;
   }
 
-
   try {
     const fetchAndFilter = async (url) => {
       const res = await fetch(url);
       const data = await res.json();
       const list = Array.isArray(data) ? data : data.data || [];
-      return list.filter(item => item.name?.toLowerCase().includes(query.toLowerCase()));
+      return list.filter((item) => item.name?.toLowerCase().includes(query.toLowerCase()));
     };
-
 
     let url = '';
     switch (activeTab.value) {
       case 'product':
-        url = 'http://localhost:8083/api/products'; break;
+        url = 'http://localhost:8083/api/products';
+        break;
       case 'customer':
-        url = 'http://localhost:8083/api/customers'; break;
+        url = 'http://localhost:8083/api/customers';
+        break;
       case 'order':
-        url = 'http://localhost:8083/api/orders'; break;
+        url = 'http://localhost:8083/api/orders';
+        break;
       case 'supplier':
-        url = 'http://localhost:8083/api/suppliers'; break;
+        url = 'http://localhost:8083/api/suppliers';
+        break;
     }
-
-
 
     if (url) {
       const filtered = await fetchAndFilter(url);
@@ -164,10 +163,9 @@ async function fetchSearchResults() {
 }
 
 function logout() {
- 
   sessionStorage.removeItem('token'); // Nếu bạn lưu token
-  localStorage.removeItem('user');  // Nếu bạn lưu thông tin người dùng
-  sessionStorage.removeItem('employee'); 
+  localStorage.removeItem('user'); // Nếu bạn lưu thông tin người dùng
+  sessionStorage.removeItem('employee');
   // Điều hướng về trang đăng nhập
   route.push('/');
 }
@@ -182,7 +180,6 @@ onMounted(() => {
   storedUser.value = employee;
 });
 
-
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutsideProfile);
   document.removeEventListener('click', handleClickOutsideHelp);
@@ -191,46 +188,50 @@ onUnmounted(() => {
 });
 </script>
 <template>
-    <div class="header">
-          <!-- Search Section -->
-          <div class="header-left" ref="CheckRef" :class="{ active: Check }" @click="SearchDropdown">
-            <i class="fa-solid fa-magnifying-glass" @click.stop="fetchSearchResults"></i>
-            <input v-model="searchInput" @keyup.enter="fetchSearchResults" type="text" placeholder="Tìm kiếm (Ctrl + K)" />
-            <div v-show="Check" class="notification-container" @click.stop>
-              <div class="tabs">
-                <div
-                  v-for="tab in listSearch"
-                  :key="tab.id"
-                  :class="['tab', { active: activeTab === tab.id }]"
-                  @click="changeTab(tab.id)"
-                >
-                  {{ tab.name }}
-                </div>
-              </div>
-              <div class="tab-content">
-                <i :class="currentTab.icon"></i>
-                <template v-if="isSearching">
-                  <p>Đang tìm kiếm...</p>
-                </template>
-                <template v-else-if="searchResults.length > 0">
-                  <ul style="text-align: left; padding: 0 20px;">
-                    <li v-for="item in searchResults" :key="item.id" style="padding: 5px 0;">
-                      {{ item.name }}
-                    </li>
-                  </ul>
-                </template>
-                <template v-else>
-                  <p>{{ currentTab.message }}</p>
-                </template>
-              </div>
-            </div>
+  <div class="header">
+    <!-- Search Section -->
+    <div class="header-left" ref="CheckRef" :class="{ active: Check }" @click="SearchDropdown">
+      <i class="fa-solid fa-magnifying-glass" @click.stop="fetchSearchResults"></i>
+      <input
+        v-model="searchInput"
+        @keyup.enter="fetchSearchResults"
+        type="text"
+        placeholder="Tìm kiếm (Ctrl + K)"
+      />
+      <div v-show="Check" class="notification-container" @click.stop>
+        <div class="tabs">
+          <div
+            v-for="tab in listSearch"
+            :key="tab.id"
+            :class="['tab', { active: activeTab === tab.id }]"
+            @click="changeTab(tab.id)"
+          >
+            {{ tab.name }}
           </div>
+        </div>
+        <div class="tab-content">
+          <i :class="currentTab.icon"></i>
+          <template v-if="isSearching">
+            <p>Đang tìm kiếm...</p>
+          </template>
+          <template v-else-if="searchResults.length > 0">
+            <ul style="text-align: left; padding: 0 20px">
+              <li v-for="item in searchResults" :key="item.id" style="padding: 5px 0">
+                {{ item.name }}
+              </li>
+            </ul>
+          </template>
+          <template v-else>
+            <p>{{ currentTab.message }}</p>
+          </template>
+        </div>
+      </div>
+    </div>
 
-
-          <!-- User & Icons Section -->
-          <div class="header-right">
-            <!-- Help Icon -->
-            <!-- <div ref="helpRef" style="position: relative;">
+    <!-- User & Icons Section -->
+    <div class="header-right">
+      <!-- Help Icon -->
+      <!-- <div ref="helpRef" style="position: relative;">
               <i class="fa-regular fa-circle-question" @click="toggleHelpDropdown"></i>
               <div v-if="showHelpDropdown" class="dropdown-menu">
                 <div class="dropdown-item">
@@ -269,42 +270,34 @@ onUnmounted(() => {
                 </div>
               </div>
             </div> -->
-            <!-- User Profile -->
-            <div
-              class="user-profile"
-              ref="profileRef"
-              @click="toggleDropdown"
-            >
-              <div class="user-info">
-                <i class="fa-regular fa-user"></i>
-                <span class="user-name">{{ userName }}</span>
-                <i class="fa-solid fa-chevron-down"></i>
-              </div>
+      <!-- User Profile -->
+      <div class="user-profile" ref="profileRef" @click="toggleDropdown">
+        <div class="user-info">
+          <i class="fa-regular fa-user"></i>
+          <span class="user-name">{{ userName }}</span>
+          <i class="fa-solid fa-chevron-down"></i>
+        </div>
 
-
-              <!-- Dropdown -->
-              <div v-if="showDropdown" class="dropdown-menu">
-                <div class="dropdown-item" @click="toInformationAccount">
-                  <i class="fa-regular fa-user"></i> Tài khoản của bạn
-                </div>
-                <!-- <div class="dropdown-item">
+        <!-- Dropdown -->
+        <div v-if="showDropdown" class="dropdown-menu">
+          <div class="dropdown-item" @click="toInformationAccount">
+            <i class="fa-regular fa-user"></i> Tài khoản của bạn
+          </div>
+          <!-- <div class="dropdown-item">
                   <i class="fa-solid fa-box"></i> Thông tin gói dịch vụ
                 </div> -->
-                <div class="dropdown-item" @click="logout">
-                  <i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng xuất
-                </div>
-                <hr />
-                <!-- <div class="dropdown-item">Điều khoản dịch vụ</div>
-                <div class="dropdown-item">Chính sách bảo mật</div> -->
-              </div>
-            </div>
+          <div class="dropdown-item" @click="logout">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng xuất
           </div>
+          <hr />
+          <!-- <div class="dropdown-item">Điều khoản dịch vụ</div>
+                <div class="dropdown-item">Chính sách bảo mật</div> -->
         </div>
-       
+      </div>
+    </div>
+  </div>
 </template>
 <style scoped>
-
-
 .header {
   width: 85%;
   position: fixed;
@@ -314,9 +307,8 @@ onUnmounted(() => {
   background-color: white;
   padding: 10px 0;
   box-shadow: 2px 2px 10px rgba(53, 53, 53, 0.1);
-  font-family:Arial, Helvetica, sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
 }
-
 
 .header-left {
   margin: 10px;
@@ -330,7 +322,6 @@ onUnmounted(() => {
   gap: 8px;
 }
 
-
 .header-left input {
   border: none;
   outline: none;
@@ -339,18 +330,15 @@ onUnmounted(() => {
   width: 150px;
 }
 
-
 .header-left i {
   color: rgb(120, 120, 120);
 }
-
 
 .header-left.active {
   outline: 1px solid rgb(0, 139, 246);
   border-radius: 5px;
   color: rgb(120, 120, 120);
 }
-
 
 .header-right {
   padding: 5px;
@@ -362,7 +350,6 @@ onUnmounted(() => {
   justify-content: flex-end;
 }
 
-
 .header-right i {
   background: rgb(120, 120, 120);
   -webkit-background-clip: text;
@@ -371,11 +358,9 @@ onUnmounted(() => {
   cursor: pointer;
 }
 
-
 .header-right i:hover {
-  -webkit-text-fill-color:  rgb(190, 187, 187);
+  -webkit-text-fill-color: rgb(190, 187, 187);
 }
-
 
 .user-profile {
   position: relative;
@@ -384,14 +369,14 @@ onUnmounted(() => {
   cursor: pointer;
   margin-right: 10px;
 }
-.user-profile:hover{
+.user-profile:hover {
   background-color: #f5f5f5;
 }
 .user-info {
   display: flex;
   align-items: center;
   gap: 12px;
-  font-size: 17.5px; 
+  font-size: 17.5px;
   /* font-weight: 600; */
 }
 .user-info i {
@@ -404,7 +389,6 @@ onUnmounted(() => {
   padding: 5px 8px;
   font-weight: bold;
 }
-
 
 .dropdown-menu {
   position: absolute;
@@ -419,7 +403,6 @@ onUnmounted(() => {
   padding: 10px;
 }
 
-
 .dropdown-item {
   padding: 10px;
   display: flex;
@@ -428,23 +411,23 @@ onUnmounted(() => {
   cursor: pointer;
 }
 
-
 .dropdown-item:hover {
   background-color: #f5f5f5;
 }
 
-
 .submenu {
   padding-left: 20px;
 }
-.submenu .dropdown-item:hover{
+.submenu .dropdown-item:hover {
   background-color: white;
   color: rgb(0, 139, 246);
 }
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
   transition: all 0.3s ease;
 }
-.fade-enter-from, .fade-leave-to {
+.fade-enter-from,
+.fade-leave-to {
   opacity: 0;
   transform: translateY(-5px);
 }
@@ -454,12 +437,10 @@ onUnmounted(() => {
   padding: 10px;
 }
 
-
 .dropdown-item-spe a {
   text-decoration: none;
   color: inherit;
 }
-
 
 .dropdown-item-spe div:hover {
   text-decoration: underline;
@@ -476,7 +457,6 @@ onUnmounted(() => {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   z-index: 1000;
 }
-
 
 .tabs {
   display: flex;
@@ -506,9 +486,8 @@ onUnmounted(() => {
 .hidden {
   display: none;
 }
-a{
+a {
   text-decoration: none;
   color: black;
 }
 </style>
-

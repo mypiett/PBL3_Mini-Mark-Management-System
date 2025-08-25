@@ -1,8 +1,8 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
-import { Chart, registerables } from "chart.js";
-import axios from "axios";
-import dayjs from "dayjs";
+import { ref, onMounted, onUnmounted } from 'vue';
+import { Chart, registerables } from 'chart.js';
+import axios from 'axios';
+import dayjs from 'dayjs';
 
 Chart.register(...registerables);
 
@@ -12,31 +12,31 @@ let myChart = null;
 // Hàm xử lý dữ liệu doanh thu từ API
 const getRevenuePerDay = (orders, weekOffset = 0) => {
   const revenue = {
-    "Thứ 2": 0,
-    "Thứ 3": 0,
-    "Thứ 4": 0,
-    "Thứ 5": 0,
-    "Thứ 6": 0,
-    "Thứ 7": 0,
-    "Chủ Nhật": 0,
+    'Thứ 2': 0,
+    'Thứ 3': 0,
+    'Thứ 4': 0,
+    'Thứ 5': 0,
+    'Thứ 6': 0,
+    'Thứ 7': 0,
+    'Chủ Nhật': 0,
   };
 
-  const weekStart = dayjs().startOf("week").add(1, "day").subtract(weekOffset, "week"); // Thứ 2
-  const weekEnd = weekStart.add(6, "day");
+  const weekStart = dayjs().startOf('week').add(1, 'day').subtract(weekOffset, 'week'); // Thứ 2
+  const weekEnd = weekStart.add(6, 'day');
 
   for (const order of orders) {
     const orderDate = dayjs(order.order_date);
     if (orderDate.isAfter(weekEnd) || orderDate.isBefore(weekStart)) continue;
 
-    const day = orderDate.format("dddd"); // e.g., "Monday"
+    const day = orderDate.format('dddd'); // e.g., "Monday"
     const vnDay = {
-      Monday: "Thứ 2",
-      Tuesday: "Thứ 3",
-      Wednesday: "Thứ 4",
-      Thursday: "Thứ 5",
-      Friday: "Thứ 6",
-      Saturday: "Thứ 7",
-      Sunday: "Chủ Nhật",
+      Monday: 'Thứ 2',
+      Tuesday: 'Thứ 3',
+      Wednesday: 'Thứ 4',
+      Thursday: 'Thứ 5',
+      Friday: 'Thứ 6',
+      Saturday: 'Thứ 7',
+      Sunday: 'Chủ Nhật',
     }[day];
 
     if (vnDay) {
@@ -49,27 +49,27 @@ const getRevenuePerDay = (orders, weekOffset = 0) => {
 
 onMounted(async () => {
   try {
-    const response = await axios.get("http://localhost:8083/api/orders");
+    const response = await axios.get('http://localhost:8083/api/orders');
     const orders = response.data;
 
-    const labels = ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ Nhật"];
+    const labels = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ Nhật'];
     const lastWeekRevenue = getRevenuePerDay(orders, 1); // Tuần trước
     const thisWeekRevenue = getRevenuePerDay(orders, 0); // Tuần này
 
     myChart = new Chart(chartRef.value, {
-      type: "bar",
+      type: 'bar',
       data: {
         labels,
         datasets: [
           {
-            label: "Tuần trước",
+            label: 'Tuần trước',
             data: lastWeekRevenue,
-            backgroundColor: "rgba(255, 99, 132, 0.6)",
+            backgroundColor: 'rgba(255, 99, 132, 0.6)',
           },
           {
-            label: "Tuần này",
+            label: 'Tuần này',
             data: thisWeekRevenue,
-            backgroundColor: "rgba(54, 162, 235, 0.6)",
+            backgroundColor: 'rgba(54, 162, 235, 0.6)',
           },
         ],
       },
@@ -79,16 +79,16 @@ onMounted(async () => {
           legend: { display: true },
           title: {
             display: true,
-            text: "Doanh Thu Siêu Thị Mini - So Sánh Tuần Này & Tuần Trước",
-            font: { size: 16, weight: "bold" },
+            text: 'Doanh Thu Siêu Thị Mini - So Sánh Tuần Này & Tuần Trước',
+            font: { size: 16, weight: 'bold' },
           },
         },
         scales: {
-          x: { ticks: { color: "#000" } },
+          x: { ticks: { color: '#000' } },
           y: {
             beginAtZero: true,
             ticks: {
-              color: "#000",
+              color: '#000',
               callback: (value) => `${value}`,
             },
           },
@@ -96,7 +96,7 @@ onMounted(async () => {
       },
     });
   } catch (error) {
-    console.error("Lỗi khi lấy dữ liệu:", error);
+    console.error('Lỗi khi lấy dữ liệu:', error);
   }
 });
 

@@ -1,51 +1,51 @@
 <script setup>
-import { onMounted, ref, computed } from 'vue'
-import axios from 'axios'
-import { useRoute } from 'vue-router'
-import { useRouter } from 'vue-router'
-import MainPage from '@/components/Mainpage.vue'
+import { onMounted, ref, computed } from 'vue';
+import axios from 'axios';
+import { useRoute } from 'vue-router';
+import { useRouter } from 'vue-router';
+import MainPage from '@/components/Mainpage.vue';
 
-const route = useRoute()
-const router = useRouter()
-const importOrder = ref(null)
-const confirm = ref(null)
+const route = useRoute();
+const router = useRouter();
+const importOrder = ref(null);
+const confirm = ref(null);
 
 const totalCost = computed(() => {
-  return importOrder.value?.stockImportDetail.reduce((sum, item) => sum + item.totalPrice, 0) || 0
-})
+  return importOrder.value?.stockImportDetail.reduce((sum, item) => sum + item.totalPrice, 0) || 0;
+});
 
 const formattedImportDate = computed(() => {
-  const date = new Date(importOrder.value?.importDate)
-  return date.toLocaleString()
-})
+  const date = new Date(importOrder.value?.importDate);
+  return date.toLocaleString();
+});
 const confirmImport = () => {
   router.push({
     path: '/importProduct',
-    query: { importId: route.params.id }
-  })
-}
+    query: { importId: route.params.id },
+  });
+};
 function getStatusLabel(status) {
   switch (status) {
     case 'DRAFT':
-      return 'Chờ duyệt'
+      return 'Chờ duyệt';
     case 'ACTIVE':
-      return 'Đã nhập'
+      return 'Đã nhập';
     case 'CANCELLED':
-      return 'Đã hủy'
+      return 'Đã hủy';
     default:
-      return status
+      return status;
   }
 }
 onMounted(async () => {
-  confirm.value = route.query.confirm
-  const importId = route.params.id
+  confirm.value = route.query.confirm;
+  const importId = route.params.id;
   try {
-    const response = await axios.get(`http://localhost:8083/StockImport/${importId}`)
-    const importData = response.data
+    const response = await axios.get(`http://localhost:8083/StockImport/${importId}`);
+    const importData = response.data;
 
     // Đổi tên đúng là stockImportDetail
     if (!Array.isArray(importData.stockImportDetail)) {
-      importData.stockImportDetail = []
+      importData.stockImportDetail = [];
     }
 
     // Nếu có API để lấy thông tin sản phẩm theo importDetailId hoặc productId thì dùng, nếu không thì bỏ phần này
@@ -53,15 +53,13 @@ onMounted(async () => {
 
     // Giả sử bạn có thông tin tên sản phẩm khác, bạn có thể thêm vào nếu cần
 
-    importOrder.value = importData
+    importOrder.value = importData;
   } catch (err) {
-    alert('Không thể tải phiếu nhập.')
-    console.error(err)
+    alert('Không thể tải phiếu nhập.');
+    console.error(err);
   }
-})
-
+});
 </script>
-
 
 <template>
   <div class="container">
@@ -70,16 +68,29 @@ onMounted(async () => {
     </div>
 
     <div class="invoice-container" v-if="importOrder">
-      <router-link to="/invoiceImport" class="back-button" style="text-decoration: none; font-size: 30px;">⬅️</router-link>
+      <router-link
+        to="/invoiceImport"
+        class="back-button"
+        style="text-decoration: none; font-size: 30px"
+        >⬅️</router-link
+      >
       <div class="header">
         <h2>📦 HÓA ĐƠN NHẬP HÀNG</h2>
-        <p>Mã phiếu nhập: <strong>{{ importOrder.importId }}</strong></p>
-        <p>Ngày nhập: <strong>{{ formattedImportDate }}</strong></p>
-        <p>Trạng thái: <strong>{{ getStatusLabel(importOrder.status) }}</strong></p>
+        <p>
+          Mã phiếu nhập: <strong>{{ importOrder.importId }}</strong>
+        </p>
+        <p>
+          Ngày nhập: <strong>{{ formattedImportDate }}</strong>
+        </p>
+        <p>
+          Trạng thái: <strong>{{ getStatusLabel(importOrder.status) }}</strong>
+        </p>
       </div>
 
       <div class="info">
-        <p>Mã nhân viên nhập: <strong>{{ importOrder.employeeId }}</strong></p>
+        <p>
+          Mã nhân viên nhập: <strong>{{ importOrder.employeeId }}</strong>
+        </p>
       </div>
 
       <table class="product-table">
@@ -93,24 +104,27 @@ onMounted(async () => {
         </thead>
         <tbody>
           <tr v-for="item in importOrder.stockImportDetail" :key="item.importDetailId">
-            <td>{{ item.product.name}}</td>
+            <td>{{ item.product.name }}</td>
             <td>{{ item.quantity }}</td>
             <td>{{ item.unitPrice.toLocaleString() }} đ</td>
             <td>{{ item.totalPrice.toLocaleString() }} đ</td>
-            </tr>
+          </tr>
         </tbody>
       </table>
 
       <div class="totals">
-        <p>Tổng chi phí: <strong>{{ totalCost.toLocaleString() }} đ</strong></p>
+        <p>
+          Tổng chi phí: <strong>{{ totalCost.toLocaleString() }} đ</strong>
+        </p>
       </div>
       <div class="actions">
-        <button v-if="confirm" @click="confirmImport" class="confirm-button">✅ Xác nhận hóa đơn</button>
-    </div>
+        <button v-if="confirm" @click="confirmImport" class="confirm-button">
+          ✅ Xác nhận hóa đơn
+        </button>
+      </div>
     </div>
   </div>
 </template>
-
 
 <style scoped>
 .invoice-container {
@@ -200,4 +214,3 @@ onMounted(async () => {
   background-color: #219150;
 }
 </style>
-

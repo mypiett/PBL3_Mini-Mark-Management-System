@@ -11,7 +11,7 @@ const router = useRouter();
 const product = ref({
   name: '',
   price: 0,
- expiration_date: '',
+  expiration_date: '',
   sell: 0,
   img: '',
   categoryId: '',
@@ -27,7 +27,7 @@ onMounted(async () => {
   const [res1, res2, res3] = await Promise.all([
     axios.get('/api/products/categories'),
     axios.get('/api/products/suppliers'),
-    axios.get('/api/products')
+    axios.get('/api/products'),
   ]);
   categories.value = res1.data;
   suppliers.value = res2.data;
@@ -35,10 +35,11 @@ onMounted(async () => {
 });
 
 const checkProduct = () => {
-  const existing = existingProducts.value.find(prod =>
-    prod.name === product.value.name &&
-    prod.category?.categoryId === product.value.categoryId &&
-    prod.supplier?.supplierId === product.value.supplierId
+  const existing = existingProducts.value.find(
+    (prod) =>
+      prod.name === product.value.name &&
+      prod.category?.categoryId === product.value.categoryId &&
+      prod.supplier?.supplierId === product.value.supplierId
   );
 
   if (existing) {
@@ -58,7 +59,7 @@ const saveProduct = async () => {
     supplier_id: product.value.supplierId,
     sell: product.value.sell,
     img: product.value.img,
-    expirationDate: product.value.expiration_date
+    expirationDate: product.value.expiration_date,
   };
 
   try {
@@ -70,7 +71,6 @@ const saveProduct = async () => {
     message.value = 'Thêm sản phẩm thất bại!';
   }
 };
-
 </script>
 
 <template>
@@ -89,7 +89,9 @@ const saveProduct = async () => {
                   <label>Danh mục <span class="required">*</span></label>
                   <select v-model="product.categoryId" @change="checkProduct">
                     <option disabled value="">Chọn danh mục</option>
-                    <option v-for="cat in categories" :key="cat.categoryId" :value="cat.categoryId">{{ cat.name }}</option>
+                    <option v-for="cat in categories" :key="cat.categoryId" :value="cat.categoryId">
+                      {{ cat.name }}
+                    </option>
                   </select>
                 </div>
 
@@ -102,7 +104,6 @@ const saveProduct = async () => {
                   <label>Giá nhập</label>
                   <input type="number" v-model="product.price" />
                 </div>
-
               </div>
 
               <div class="right-form">
@@ -118,7 +119,9 @@ const saveProduct = async () => {
                   <label>Nhà cung cấp</label>
                   <select v-model="product.supplierId" @change="checkProduct">
                     <option disabled value="">Chọn nhà cung cấp</option>
-                    <option v-for="sup in suppliers" :key="sup.supplierId" :value="sup.supplierId">{{ sup.name }}</option>
+                    <option v-for="sup in suppliers" :key="sup.supplierId" :value="sup.supplierId">
+                      {{ sup.name }}
+                    </option>
                   </select>
                 </div>
               </div>
@@ -134,8 +137,6 @@ const saveProduct = async () => {
   </div>
 </template>
 
-
-
 <style scoped>
 body {
   padding: 0;
@@ -149,7 +150,6 @@ body {
   position: relative;
 }
 
-
 .container {
   flex: 1;
   display: flex;
@@ -159,21 +159,20 @@ body {
   position: relative;
 }
 
-
 .page {
   flex: 1;
   display: flex;
   flex-direction: column;
   background-color: #fff;
   position: relative;
-  font-family:Arial, Helvetica, sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
 }
-.page-main{
-    display: flex;
-    flex-direction: column;
-    margin-top: 6%;
-    padding: 0px 30px;
-    background-color: #f5f5f5;
+.page-main {
+  display: flex;
+  flex-direction: column;
+  margin-top: 6%;
+  padding: 0px 30px;
+  background-color: #f5f5f5;
 }
 .form-container {
   padding: 30px;
@@ -181,18 +180,15 @@ body {
   background-color: #fff;
 }
 
-
 h2 {
   color: #0884f1;
   margin-bottom: 20px;
 }
 
-
 .form-grid {
   display: flex;
   gap: 30px;
 }
-
 
 .left-form,
 .right-form {
@@ -202,18 +198,15 @@ h2 {
   gap: 15px;
 }
 
-
 .form-group {
   display: flex;
   flex-direction: column;
 }
 
-
 .form-group label {
   font-weight: bold;
   margin-bottom: 5px;
 }
-
 
 .form-group input,
 .form-group select {
@@ -222,11 +215,9 @@ h2 {
   border-radius: 4px;
 }
 
-
 .required {
   color: red;
 }
-
 
 .image-upload input {
   padding: 8px;
@@ -254,7 +245,6 @@ button {
   cursor: pointer;
 }
 
-
 button:hover {
   background-color: #279aff;
 }
@@ -272,18 +262,10 @@ button:hover {
   cursor: pointer;
 }
 
-
 .back-button:hover {
   background-color: #279aff;
 }
-a{
+a {
   text-decoration: none;
 }
 </style>
-
-
-
-
-
-
-

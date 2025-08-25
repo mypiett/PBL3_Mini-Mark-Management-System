@@ -1,5 +1,4 @@
 <script setup>
-
 import MainPage from '../../components/Mainpage.vue';
 import TheHeader from '../../components/TheHeader.vue';
 // import ProductList from '../Part/ProductList.vue';
@@ -12,16 +11,16 @@ import ImportProductList from '../../components/ImportProductList.vue';
     <div class="container">
       <div class="page">
         <TheHeader />
-        <div class ="page-main">
-            <div class ="title">
-                <h3>Danh sách hàng cần nhập</h3>
-                <router-link to="/ProductCatalog/importProduct" class="addProduct">
-                  <i class="fa-solid fa-circle-plus"></i>
-                  <p>Nhập hàng mới</p>
-                </router-link>
-            </div>
-            <!-- <ProductList :mode="'importGoods'" /> -->
-            <ImportProductList :mode="'importGoods'"/>
+        <div class="page-main">
+          <div class="title">
+            <h3>Danh sách hàng cần nhập</h3>
+            <router-link to="/ProductCatalog/importProduct" class="addProduct">
+              <i class="fa-solid fa-circle-plus"></i>
+              <p>Nhập hàng mới</p>
+            </router-link>
+          </div>
+          <!-- <ProductList :mode="'importGoods'" /> -->
+          <ImportProductList :mode="'importGoods'" />
         </div>
       </div>
     </div>
@@ -42,7 +41,7 @@ body {
 }
 
 .container {
-  flex: 1; 
+  flex: 1;
   display: flex;
   flex-direction: column;
   background-color: #fff;
@@ -56,48 +55,48 @@ body {
   flex-direction: column;
   background-color: #fff;
   position: relative;
-  font-family:Arial, Helvetica, sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
 }
-.page-main{
-    display: flex;
-    flex-direction: column;
-    margin-top: 6%;
-    padding: 0px 30px;
-    background-color: #f5f5f5;
+.page-main {
+  display: flex;
+  flex-direction: column;
+  margin-top: 6%;
+  padding: 0px 30px;
+  background-color: #f5f5f5;
 }
-.title{
-    display: flex;
-    justify-content: space-between;
-    padding: 10px;
-    align-items: center;
+.title {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  align-items: center;
 }
-.title h3{
-    font-size: 24px;
-    font-weight: 600;
-    color:rgb(50, 50, 50);
+.title h3 {
+  font-size: 24px;
+  font-weight: 600;
+  color: rgb(50, 50, 50);
 }
-.addProduct{
-    padding: 2px 15px;
-    border-radius: 30px;
-    background-color: #0884f1;
-    color:#fff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
+.addProduct {
+  padding: 2px 15px;
+  border-radius: 30px;
+  background-color: #0884f1;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
 }
-.addProduct i{
-    color: #fff;
-    margin-right: 5px;
+.addProduct i {
+  color: #fff;
+  margin-right: 5px;
 }
-.addProduct:hover{
-    background-color: #279aff;
-    color:#f1f1f1;
+.addProduct:hover {
+  background-color: #279aff;
+  color: #f1f1f1;
 }
-.addProduct:hover i{
-    color:#f1f1f1;
+.addProduct:hover i {
+  color: #f1f1f1;
 }
-.addProduct:active{
+.addProduct:active {
   transform: scale(0.95);
 }
 a {

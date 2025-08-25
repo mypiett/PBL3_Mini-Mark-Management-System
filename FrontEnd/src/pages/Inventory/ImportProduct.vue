@@ -5,10 +5,8 @@ import axios from 'axios';
 import MainPage from '../../components/Mainpage.vue';
 import TheHeader from '../../components/TheHeader.vue';
 
-
 const route = useRoute();
 const router = useRouter();
-
 
 const importId = ref(route.query.importId); // ✅ Lấy từ query thay vì params
 const message = ref('');
@@ -17,17 +15,13 @@ const importDetails = ref([]);
 const productName = ref({});
 const showDraftList = computed(() => !importId.value);
 
-
-
-
 // Lấy danh sách các đơn nhập có trạng thái "DRAFT"
 onMounted(async () => {
   try {
     const res = await axios.get('http://localhost:8083/StockImport');
     if (Array.isArray(res.data)) {
-      importProduct.value = res.data.filter(item => item.status === 'DRAFT');
+      importProduct.value = res.data.filter((item) => item.status === 'DRAFT');
     }
-
 
     // ✅ Nếu có importId truyền vào thì tự động gọi chi tiết
     if (importId.value) {
@@ -38,10 +32,8 @@ onMounted(async () => {
   }
 });
 
-
 // Danh sách các đơn DRAFT
 const draftImportList = computed(() => importProduct.value);
-
 
 // Khi chọn đơn nhập để xem chi tiết
 const selectImportId = async (id) => {
@@ -52,16 +44,15 @@ const selectImportId = async (id) => {
       importDetails.value = resDetails.data.stockImportDetail;
     }
 
-
-    const resProductIds = await axios.get(`http://localhost:8083/StockImportDetails/productIds/${id}`);
+    const resProductIds = await axios.get(
+      `http://localhost:8083/StockImportDetails/productIds/${id}`
+    );
     const productIds = resProductIds.data || [];
-
 
     importDetails.value = importDetails.value.map((detail, idx) => ({
       ...detail,
-      productId: productIds[idx] || null
+      productId: productIds[idx] || null,
     }));
-
 
     for (const pid of productIds) {
       try {
@@ -76,7 +67,6 @@ const selectImportId = async (id) => {
   }
 };
 
-
 // Method để format tiền tệ
 const formatCurrency = (value) => {
   if (value) {
@@ -85,13 +75,11 @@ const formatCurrency = (value) => {
   return value;
 };
 
-
 // Hàm nhập kho
 const importStock = async () => {
   try {
     const res = await axios.put(`http://localhost:8083/StockImport/${importId.value}/import-stock`);
     message.value = res.data;
-
 
     setTimeout(() => {
       router.push('/ProductCatalog');
@@ -101,7 +89,6 @@ const importStock = async () => {
   }
 };
 
-
 // Chuyển đến trang trả hàng
 const goToPayProduct = (importId, importDetailId, productId) => {
   router.push({
@@ -109,12 +96,11 @@ const goToPayProduct = (importId, importDetailId, productId) => {
     query: {
       importId: importId,
       id: importDetailId,
-      productId: productId
-    }
+      productId: productId,
+    },
   });
 };
 </script>
-
 
 <template>
   <div class="main-container">
@@ -128,7 +114,6 @@ const goToPayProduct = (importId, importDetailId, productId) => {
           </div>
           <div v-if="message" class="message">{{ message }}</div>
 
-
           <div v-if="showDraftList && draftImportList.length > 0">
             <h3>Danh sách đơn nhập</h3>
             <ul>
@@ -139,7 +124,7 @@ const goToPayProduct = (importId, importDetailId, productId) => {
               </li>
             </ul>
           </div>
-         
+
           <div v-if="importId && importDetails.length > 0" class="importProduct_container">
             <h2>Đơn nhập hàng: {{ importId }}</h2>
             <table class="product-table">
@@ -159,7 +144,10 @@ const goToPayProduct = (importId, importDetailId, productId) => {
                   <td>{{ formatCurrency(detail.unitPrice) }}</td>
                   <td>{{ formatCurrency(detail.totalPrice) }}</td>
                   <td class="payProductContainer">
-                    <button class="payProduct" @click="goToPayProduct(importId, detail.importDetailId, detail.productId)">
+                    <button
+                      class="payProduct"
+                      @click="goToPayProduct(importId, detail.importDetailId, detail.productId)"
+                    >
                       Trả hàng
                     </button>
                   </td>
@@ -167,15 +155,12 @@ const goToPayProduct = (importId, importDetailId, productId) => {
               </tbody>
             </table>
 
-
             <div class="button-group">
               <button class="back-button" @click="importId = null">
                 ← Quay lại danh sách đơn nhập
               </button>
               <button @click="importStock" class="import-btn">Nhập kho</button>
             </div>
-
-
           </div>
         </div>
       </div>
@@ -183,17 +168,13 @@ const goToPayProduct = (importId, importDetailId, productId) => {
   </div>
 </template>
 
-
-
-
 <style scoped>
 body {
   padding: 0;
   margin: 0;
   overflow: hidden;
-  background-color:  #ffffff;/* Thay đổi nền của toàn bộ trang */
+  background-color: #ffffff; /* Thay đổi nền của toàn bộ trang */
 }
-
 
 .main-container {
   display: flex;
@@ -201,7 +182,6 @@ body {
   height: 100vh;
   position: relative;
 }
-
 
 .container {
   flex: 1;
@@ -212,7 +192,6 @@ body {
   position: relative;
 }
 
-
 .page {
   flex: 1;
   display: flex;
@@ -222,15 +201,13 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-
 .page-main {
   display: flex;
   flex-direction: column;
   margin-top: 6%;
   padding: 0px 30px;
-  background-color:  #ffffff; /* Nền sáng cho phần nội dung chính */
+  background-color: #ffffff; /* Nền sáng cho phần nội dung chính */
 }
-
 
 .title {
   display: flex;
@@ -239,19 +216,17 @@ body {
   align-items: center;
 }
 
-
 .title h3 {
   font-size: 24px;
   font-weight: 600;
   color: rgb(50, 50, 50);
 }
-a{
+a {
   text-decoration: none;
 }
 .importProduct_container {
   margin-top: 20px;
 }
-
 
 .product-table {
   width: 100%;
@@ -259,22 +234,20 @@ a{
   margin-top: 20px;
 }
 
-
-.product-table th, .product-table td {
+.product-table th,
+.product-table td {
   border: 1px solid #ddd;
   padding: 10px;
   text-align: left;
 }
 
-
 .product-table th {
   background-color: #e0e0e0; /* Nền sáng cho tiêu đề bảng */
 }
 
-
 .import-btn {
   padding: 10px 20px;
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   border: none;
   border-radius: 5px;
@@ -282,11 +255,10 @@ a{
   font-size: 16px;
 }
 
-
 .import-btn:hover {
   background-color: #45a049;
 }
-.import-btn:active{
+.import-btn:active {
   transform: scale(0.95);
 }
 .message {
@@ -299,19 +271,19 @@ a{
   text-align: center;
   font-weight: bold;
 }
-.payProductContainer{
+.payProductContainer {
   display: flex;
   justify-content: center;
   align-items: center;
 }
-.payProduct{
+.payProduct {
   background-color: #0884f1;
   color: #fff;
   padding: 5px;
   border: #0884f1;
   cursor: pointer;
 }
-.payProduct:active{
+.payProduct:active {
   transform: scale(0.95);
 }
 .button-group {
@@ -321,18 +293,13 @@ a{
   margin-top: 20px;
 }
 
-
 .button-group button {
   margin-right: 10px;
 }
 
-
 .button-group .import-btn {
   margin-left: auto; /* đẩy sang bên phải */
 }
-
-
-
 
 .back-button {
   background-color: #0884f1;
@@ -344,20 +311,11 @@ a{
   font-size: 14px;
 }
 
-
 .back-button:hover {
   background-color: #006fd6;
 }
 
-
 .back-button:active {
   transform: scale(0.95);
 }
-
-
 </style>
-
-
-
-
-

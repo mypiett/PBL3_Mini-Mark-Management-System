@@ -13,7 +13,7 @@ const storeInfo = ref({
   branch2: '25 Lạc Long Quân, Liên Chiểu, Hòa Khánh Bắc, Đà Nẵng',
   branch3: '94 Võ Chí Công, Hòa Hải, Ngũ Hành Sơn, Đà Nẵng',
   hotline: '0123 456 789',
-  facebook: 'facebook.com/abysselite'
+  facebook: 'facebook.com/abysselite',
 });
 
 const editing = ref(false);
@@ -52,8 +52,6 @@ function saveChanges() {
 
             <label>Facebook:</label>
             <input v-model="storeInfo.facebook" :disabled="!editing" />
-
-          
           </div>
         </div>
 
@@ -142,7 +140,8 @@ function saveChanges() {
   gap: 12px;
 }
 
-.edit-btn, .save-btn {
+.edit-btn,
+.save-btn {
   padding: 10px 16px;
   font-weight: bold;
   border: none;
